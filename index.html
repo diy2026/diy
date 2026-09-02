@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电脑电源推荐瓦数计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+        body {
+            background-color: #1f2937;
+            color: #f3f4f6;
+            padding-top: 64px;
+            padding-bottom:40px;
+            padding-left:20px;
+            padding-right:20px;
+        }
+        /* 顶部导航 */
+        .navbar{
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            background:#111827;
+            border-bottom:1px solid #374151;
+            z-index:99;
+        }
+        .nav-wrap{
+            max-width:720px;
+            margin:0 auto;
+            display:flex;
+        }
+        .nav-item{
+            padding:18px 22px;
+            color:#9ca3af;
+            text-decoration:none;
+            font-size:16px;
+            transition:0.2s;
+        }
+        .nav-item:hover{
+            color:#38bdf8;
+        }
+        .nav-item.active{
+            color:#38bdf8;
+            border-bottom:2px solid #38bdf8;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            background-color: #2d3748;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+            color: #38bdf8;
+        }
+        .item-box {
+            margin-bottom: 24px;
+        }
+        .filter-row{
+            display:flex;
+            gap:12px;
+            margin-bottom:10px;
+        }
+        .filter-col{
+            flex:1;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        select, input[type="number"] {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 15px;
+            border-radius: 8px;
+            border: none;
+            background-color: #4a5568;
+            color: #fff;
+        }
+        select:focus, input:focus {
+            outline: 2px solid #38bdf8;
+        }
+        .input-row{
+            display:flex;
+            gap:12px;
+            margin-top:10px;
+        }
+        .input-col{
+            flex:1;
+        }
+        .result-card {
+            margin-top:30px;
+            padding:24px;
+            background:#1e293b;
+            border-radius:10px;
+            border:1px solid #334155;
+        }
+        .result-title{
+            font-size:17px;
+            margin-bottom:16px;
+        }
+        .row-item{
+            margin:14px 0;
+        }
+        .power-safe{
+            font-size:24px;
+            color:#34d399;
+            font-weight:bold;
+        }
+        .power-best{
+            font-size:24px;
+            color:#fbbf24;
+            font-weight:bold;
+        }
+        .tip-text{
+            margin-top:18px;
+            font-size:14px;
+            color:#9ca3af;
+            line-height:1.7;
+        }
+        .split-line{
+            height:1px;
+            background:#475569;
+            margin:24px 0;
+        }
+        /* 底部版权 */
+        .footer{
+            max-width:720px;
+            margin:28px auto 0;
+            text-align:center;
+            font-size:13px;
+            color:#9ca3af;
+            line-height:1.8;
+        }
+        .footer a{
+            color:#38bdf8;
+            text-decoration:none;
+        }
+    </style>
+</head>
+<body>
+<!--顶部导航栏-->
+<div class="navbar">
+    <div class="nav-wrap">
+        <a class="nav-item active" href="index.html">首页</a>
+        <a class="nav-item" href="https://xiaobaike.dpdns.org/">软件下载</a>
+    </div>
+</div>
+
+<div class="container">
+    <h1>电脑电源瓦数推荐计算器</h1>
+
+    <div class="item-box">
+        <div class="filter-row">
+            <div class="filter-col">
+                <label>CPU品牌筛选</label>
+                <select id="cpuBrandFilter">
+                    <option value="all">全部CPU</option>
+                    <option value="intel">Intel</option>
+                    <option value="amd">AMD</option>
+                </select>
+            </div>
+        </div>
+        <label>选择CPU型号</label>
+        <select id="cpuSelect"></select>
+    </div>
+
+    <div class="item-box">
+        <div class="filter-row">
+            <div class="filter-col">
+                <label>显卡品牌筛选</label>
+                <select id="gpuBrandFilter">
+                    <option value="all">全部显卡</option>
+                    <option value="nvidia">N卡(NVIDIA)</option>
+                    <option value="amd">A卡(AMD)</option>
+                </select>
+            </div>
+        </div>
+        <label>选择显卡型号</label>
+        <select id="gpuSelect"></select>
+    </div>
+
+    <div class="split-line"></div>
+
+    <div class="item-box">
+        <label>🔧 手动输入功耗（输入后优先覆盖下拉选择）</label>
+        <div class="input-row">
+            <div class="input-col">
+                <label>CPU满载功耗(W)</label>
+                <input type="number" id="cpuManual" placeholder="留空使用下拉">
+            </div>
+            <div class="input-col">
+                <label>显卡TBP功耗(W)</label>
+                <input type="number" id="gpuManual" placeholder="留空使用下拉">
+            </div>
+        </div>
+    </div>
+
+    <div class="result-card">
+        <div class="result-title">📊 计算结果</div>
+        <div>整机估算满载功耗：<span id="totalW">0</span> W</div>
+
+        <div class="row-item">
+            <div>✅稳妥推荐(×1.5倍余量，默认BIOS不超频)：<span class="power-safe" id="safeW">0</span> W 额定</div>
+        </div>
+        <div class="row-item">
+            <div>⭐最佳推荐(×2倍余量，超频/PBO/非公显卡/后期升级)：<span class="power-best" id="bestW">0</span> W 额定</div>
+        </div>
+
+        <div class="tip-text">
+💡提示：CPU为主板默认BIOS下长时间满载功耗，不是散热TDP；显卡为官方TBP典型板载功耗，老平台、二手非公超频显卡实际功耗会更高。稳妥档位适合默认设置；最佳适合超频、多硬盘、未来升级；输出为市面常见电源额定功率，优先铜牌/金牌电源。手动输入数值会优先覆盖下拉选择。老二手硬件建议尽量往高一档电源选择。
+        </div>
+    </div>
+</div>
+
+<!--底部版权声明-->
+<div class="footer">
+    © 2026 <a href="https://space.bilibili.com/595098830">@电脑小百科</a>（抖音/B站/小红书）技术支持QQ：2591735711 软件精选 · All Rights Reserved
+</div>
+
+<script>
+//市面真实常见电源额定档位
+const powerLevels = [300,350,400,450,500,550,600,650,700,750,850,1000,1200,1300,1600];
+
+//向上匹配真实电源档位
+function getNearestPower(w){
+    for(let p of powerLevels){
+        if(p >= w) return p;
+    }
+    return 1600;
+}
+
+// ========= CPU数据库：主板默认BIOS，长时间满载Package功耗（电源选型用） =========
+const cpuDatabase = [
+    // Intel 6代 Skylake LGA1151
+    {brand:"intel",name:"i3‑6100",w:60},
+    {brand:"intel",name:"i5‑6400",w:80},
+    {brand:"intel",name:"i5‑6500",w:82},
+    {brand:"intel",name:"i5‑6600K",w:125},
+    {brand:"intel",name:"i7‑6700",w:90},
+    {brand:"intel",name:"i7‑6700K",w:150},
+
+    // Intel 7代 Kaby Lake
+    {brand:"intel",name:"i3‑7100",w:60},
+    {brand:"intel",name:"i5‑7400",w:82},
+    {brand:"intel",name:"i5‑7500",w:84},
+    {brand:"intel",name:"i5‑7600K",w:130},
+    {brand:"intel",name:"i7‑7700",w:92},
+    {brand:"intel",name:"i7‑7700K",w:155},
+
+    // Intel 8代 Coffee Lake
+    {brand:"intel",name:"i3‑8100",w:65},
+    {brand:"intel",name:"i5‑8400",w:100},
+    {brand:"intel",name:"i5‑8500",w:102},
+    {brand:"intel",name:"i5‑8600K",w:140},
+    {brand:"intel",name:"i7‑8700",w:110},
+    {brand:"intel",name:"i7‑8700K",w:160},
+
+    // Intel 9代 Coffee Lake‑S Refresh
+    {brand:"intel",name:"i3‑9100F",w:65},
+    {brand:"intel",name:"i5‑9400F",w:105},
+    {brand:"intel",name:"i5‑9600K",w:145},
+    {brand:"intel",name:"i7‑9700K",w:175},
+    {brand:"intel",name:"i9‑9900K",w:205},
+
+    // Intel 10代
+    {brand:"intel",name:"i3‑10100",w:65},
+    {brand:"intel",name:"i3‑10100F",w:65},
+    {brand:"intel",name:"i5‑10400",w:88},
+    {brand:"intel",name:"i5‑10400F",w:88},
+    {brand:"intel",name:"i5‑10600K",w:130},
+    {brand:"intel",name:"i7‑10700K",w:150},
+    {brand:"intel",name:"i9‑10900K",w:190},
+
+    // Intel 11代
+    {brand:"intel",name:"i5‑11400",w:95},
+    {brand:"intel",name:"i5‑11400F",w:95},
+    {brand:"intel",name:"i5‑11600K",w:130},
+    {brand:"intel",name:"i7‑11700K",w:160},
+    {brand:"intel",name:"i9‑11900K",w:200},
+
+    // Intel 12代 Alder Lake
+    {brand:"intel",name:"i3‑12100",w:60},
+    {brand:"intel",name:"i3‑12100F",w:60},
+    {brand:"intel",name:"i5‑12400",w:110},
+    {brand:"intel",name:"i5‑12400F",w:110},
+    {brand:"intel",name:"i5‑12600K",w:160},
+    {brand:"intel",name:"i7‑12700K",w:200},
+    {brand:"intel",name:"i9‑12900K",w:230},
+
+    // Intel 13代 Raptor Lake
+    {brand:"intel",name:"i3‑13100",w:60},
+    {brand:"intel",name:"i3‑13100F",w:60},
+    {brand:"intel",name:"i5‑13400",w:120},
+    {brand:"intel",name:"i5‑13400F",w:120},
+    {brand:"intel",name:"i5‑13600K",w:170},
+    {brand:"intel",name:"i7‑13700K",w:210},
+    {brand:"intel",name:"i9‑13900K",w:250},
+
+    // Intel 14代 Raptor Lake‑S Refresh
+    {brand:"intel",name:"i5‑14400",w:120},
+    {brand:"intel",name:"i5‑14400F",w:120},
+    {brand:"intel",name:"i5‑14600K",w:170},
+    {brand:"intel",name:"i7‑14700K",w:220},
+    {brand:"intel",name:"i9‑14900K",w:260},
+
+    // Intel Ultra 200系列 Arrow Lake‑S
+    {brand:"intel",name:"Ultra5 225F",w:120},
+    {brand:"intel",name:"Ultra5 235",w:120},
+    {brand:"intel",name:"Ultra5 245K",w:140},
+    {brand:"intel",name:"Ultra7 265K",w:190},
+    {brand:"intel",name:"Ultra7 270K Plus",w:250},
+    {brand:"intel",name:"Ultra9 285K",w:240},
+
+    // AMD FX 老AM3+ 家用
+    {brand:"amd",name:"FX‑8300",w:140},
+    {brand:"amd",name:"FX‑8350",w:160},
+
+    // AMD Ryzen 1000 Zen1 AM4
+    {brand:"amd",name:"R3‑1200",w:80},
+    {brand:"amd",name:"R5‑1400",w:95},
+    {brand:"amd",name:"R5‑1500X",w:105},
+    {brand:"amd",name:"R5‑1600",w:110},
+    {brand:"amd",name:"R5‑1600X",w:125},
+    {brand:"amd",name:"R7‑1700",w:130},
+    {brand:"amd",name:"R7‑1700X",w:150},
+    {brand:"amd",name:"R7‑1800X",w:170},
+
+    // AMD Ryzen 2000 Zen+ AM4
+    {brand:"amd",name:"R3‑2200G",w:65},
+    {brand:"amd",name:"R5‑2400G",w:65},
+    {brand:"amd",name:"R5‑2600",w:115},
+    {brand:"amd",name:"R5‑2600X",w:130},
+    {brand:"amd",name:"R7‑2700",w:140},
+    {brand:"amd",name:"R7‑2700X",w:160},
+
+    // AMD Ryzen3000 AM4
+    {brand:"amd",name:"R5‑3500X",w:95},
+    {brand:"amd",name:"R5‑3600",w:100},
+    {brand:"amd",name:"R7‑3700X",w:110},
+    {brand:"amd",name:"R7‑3800X",w:130},
+    {brand:"amd",name:"R9‑3900X",w:150},
+    {brand:"amd",name:"R9‑3950X",w:175},
+
+    // AMD Ryzen4000G APU
+    {brand:"amd",name:"R3‑4300G",w:65},
+    {brand:"amd",name:"R5‑4600G",w:65},
+
+    // AMD Ryzen5000 AM4
+    {brand:"amd",name:"R5‑5500",w:65},
+    {brand:"amd",name:"R5‑5600",w:95},
+    {brand:"amd",name:"R5‑5600X",w:110},
+    {brand:"amd",name:"R7‑5700X",w:105},
+    {brand:"amd",name:"R7‑5800X",w:125},
+    {brand:"amd",name:"R7‑5800X3D",w:120},
+    {brand:"amd",name:"R9‑5900X",w:140},
+    {brand:"amd",name:"R9‑5950X",w:165},
+
+    // AMD Ryzen7000 AM5 Zen4
+    {brand:"amd",name:"R5‑7500F",w:100},
+    {brand:"amd",name:"R5‑7600",w:105},
+    {brand:"amd",name:"R5‑7600X3D",w:90},
+    {brand:"amd",name:"R7‑7700X",w:130},
+    {brand:"amd",name:"R7‑7800X3D",w:125},
+    {brand:"amd",name:"R9‑7900X",w:170},
+    {brand:"amd",name:"R9‑7900X3D",w:170},
+    {brand:"amd",name:"R9‑7950X",w:190},
+
+    // AMD Ryzen9000 AM5 Zen5
+    {brand:"amd",name:"R5‑9600X",w:105},
+    {brand:"amd",name:"R7‑9700X",w:130},
+    {brand:"amd",name:"R7‑9800X3D",w:130},
+    {brand:"amd",name:"R9‑9900X",w:170},
+    {brand:"amd",name:"R9‑9950X",w:190}
+];
+
+// ========= GPU数据库：NVIDIA/AMD官方TGP/TBP典型板载功耗 =========
+const gpuDatabase = [
+    {brand:"none",name:"核显 / 无独立显卡",w:0},
+
+    //N卡 GTX700系列 Maxwell开普勒
+    {brand:"nvidia",name:"GTX750",w:55},
+    {brand:"nvidia",name:"GTX750Ti",w:60},
+    {brand:"nvidia",name:"GTX760",w:170},
+    {brand:"nvidia",name:"GTX770",w:230},
+    {brand:"nvidia",name:"GTX780",w:250},
+    {brand:"nvidia",name:"GTX780Ti",w:280},
+
+    //N卡 GTX900系列 Maxwell
+    {brand:"nvidia",name:"GTX950",w:110},
+    {brand:"nvidia",name:"GTX960",w:120},
+    {brand:"nvidia",name:"GTX970",w:170},
+    {brand:"nvidia",name:"GTX980",w:190},
+    {brand:"nvidia",name:"GTX980Ti",w:250},
+
+    //N卡 GTX 10系列
+    {brand:"nvidia",name:"GT1030",w:30},
+    {brand:"nvidia",name:"GTX1050",w:75},
+    {brand:"nvidia",name:"GTX1050Ti",w:75},
+    {brand:"nvidia",name:"GTX1060 6G",w:120},
+    {brand:"nvidia",name:"GTX1070",w:150},
+    {brand:"nvidia",name:"GTX1080",w:180},
+    {brand:"nvidia",name:"GTX1080Ti",w:250},
+
+    //N卡 GTX16系列
+    {brand:"nvidia",name:"GTX1630",w:75},
+    {brand:"nvidia",name:"GTX1650",w:75},
+    {brand:"nvidia",name:"GTX1660",w:120},
+    {brand:"nvidia",name:"GTX1660 Super",w:125},
+    {brand:"nvidia",name:"GTX1660Ti",w:120},
+
+    //N卡 RTX20系列
+    {brand:"nvidia",name:"RTX2060",w:160},
+    {brand:"nvidia",name:"RTX2060 Super",w:175},
+    {brand:"nvidia",name:"RTX2070",w:215},
+    {brand:"nvidia",name:"RTX2070 Super",w:215},
+    {brand:"nvidia",name:"RTX2080",w:250},
+    {brand:"nvidia",name:"RTX2080 Super",w:250},
+    {brand:"nvidia",name:"RTX2080Ti",w:300},
+
+    //N卡 RTX30系列
+    {brand:"nvidia",name:"RTX3050",w:130},
+    {brand:"nvidia",name:"RTX3060",w:170},
+    {brand:"nvidia",name:"RTX3060Ti",w:200},
+    {brand:"nvidia",name:"RTX3070",w:220},
+    {brand:"nvidia",name:"RTX3070Ti",w:250},
+    {brand:"nvidia",name:"RTX3080",w:320},
+    {brand:"nvidia",name:"RTX3080Ti",w:370},
+    {brand:"nvidia",name:"RTX3090",w:450},
+    {brand:"nvidia",name:"RTX3090Ti",w:450},
+
+    //N卡 RTX40系列 Ada
+    {brand:"nvidia",name:"RTX4060",w:115},
+    {brand:"nvidia",name:"RTX4060Ti",w:165},
+    {brand:"nvidia",name:"RTX4070",w:200},
+    {brand:"nvidia",name:"RTX4070 Super",w:220},
+    {brand:"nvidia",name:"RTX4070Ti",w:285},
+    {brand:"nvidia",name:"RTX4070Ti Super",w:285},
+    {brand:"nvidia",name:"RTX4080",w:320},
+    {brand:"nvidia",name:"RTX4080 Super",w:320},
+    {brand:"nvidia",name:"RTX4090",w:450},
+    {brand:"nvidia",name:"RTX4090D",w:450},
+
+    //N卡 RTX50系列 Blackwell
+    {brand:"nvidia",name:"RTX5050",w:130},
+    {brand:"nvidia",name:"RTX5060",w:145},
+    {brand:"nvidia",name:"RTX5060Ti",w:180},
+    {brand:"nvidia",name:"RTX5070",w:250},
+    {brand:"nvidia",name:"RTX5070Ti",w:300},
+    {brand:"nvidia",name:"RTX5080",w:360},
+    {brand:"nvidia",name:"RTX5090",w:575},
+    {brand:"nvidia",name:"RTX5090D",w:575},
+
+    //A卡 RX400系列 GCN
+    {brand:"amd",name:"RX460",w:110},
+    {brand:"amd",name:"RX470",w:145},
+    {brand:"amd",name:"RX480",w:185},
+
+    //A卡 RX500系列 GCN
+    {brand:"amd",name:"RX560",w:120},
+    {brand:"amd",name:"RX570",w:150},
+    {brand:"amd",name:"RX580",w:185},
+    {brand:"amd",name:"RX590",w:220},
+
+    //A卡 RX5000 RDNA1
+    {brand:"amd",name:"RX5600XT",w:150},
+    {brand:"amd",name:"RX5700",w:180},
+    {brand:"amd",name:"RX5700XT",w:225},
+
+    //A卡 RX6000 RDNA2
+    {brand:"amd",name:"RX6500XT",w:107},
+    {brand:"amd",name:"RX6600",w:132},
+    {brand:"amd",name:"RX6650XT",w:180},
+    {brand:"amd",name:"RX6700XT",w:230},
+    {brand:"amd",name:"RX6800",w:263},
+    {brand:"amd",name:"RX6800XT",w:300},
+    {brand:"amd",name:"RX6900XT",w:355},
+
+    //A卡 RX7000 RDNA3
+    {brand:"amd",name:"RX7400",w:55},
+    {brand:"amd",name:"RX7600",w:165},
+    {brand:"amd",name:"RX7700XT",w:245},
+    {brand:"amd",name:"RX7800XT",w:263},
+    {brand:"amd",name:"RX7900GRE",w:315},
+    {brand:"amd",name:"RX7900XT",w:315},
+    {brand:"amd",name:"RX7900XTX",w:355},
+
+    //A卡 RX9000 RDNA4
+    {brand:"amd",name:"RX9060XT",w:220},
+    {brand:"amd",name:"RX9070",w:220},
+    {brand:"amd",name:"RX9070XT",w:304}
+];
+
+//dom
+const cpuBrandFilter = document.getElementById('cpuBrandFilter');
+const cpuSelect = document.getElementById('cpuSelect');
+const gpuBrandFilter = document.getElementById('gpuBrandFilter');
+const gpuSelect = document.getElementById('gpuSelect');
+
+const cpuManual = document.getElementById('cpuManual');
+const gpuManual = document.getElementById('gpuManual');
+const totalWEl = document.getElementById('totalW');
+const safeWEl = document.getElementById('safeW');
+const bestWEl = document.getElementById('bestW');
+
+//渲染CPU下拉
+function renderCpuSelect(){
+    const filterVal = cpuBrandFilter.value;
+    cpuSelect.innerHTML = "";
+    let list;
+    if(filterVal === 'all'){
+        list = cpuDatabase;
+    }else{
+        list = cpuDatabase.filter(item=>item.brand === filterVal);
+    }
+    list.forEach(item=>{
+        const opt = document.createElement('option');
+        opt.value = item.w;
+        opt.textContent = `${item.name}（${item.w}W）`;
+        cpuSelect.appendChild(opt);
+    });
+    calcPower();
+}
+
+//渲染GPU下拉
+function renderGpuSelect(){
+    const filterVal = gpuBrandFilter.value;
+    gpuSelect.innerHTML = "";
+    let list;
+    if(filterVal === 'all'){
+        list = gpuDatabase;
+    }else if(filterVal === 'nvidia'){
+        list = gpuDatabase.filter(item=>item.brand === 'nvidia' || item.brand === 'none');
+    }else{
+        list = gpuDatabase.filter(item=>item.brand === 'amd' || item.brand === 'none');
+    }
+    list.forEach(item=>{
+        const opt = document.createElement('option');
+        opt.value = item.w;
+        opt.textContent = `${item.name}（${item.w}W）`;
+        gpuSelect.appendChild(opt);
+    });
+    calcPower();
+}
+
+//计算函数
+function calcPower(){
+    let cpuW = Number(cpuSelect.value);
+    let gpuW = Number(gpuSelect.value);
+
+    if(cpuManual.value !== '' && !isNaN(Number(cpuManual.value))){
+        cpuW = Number(cpuManual.value);
+    }
+    if(gpuManual.value !== '' && !isNaN(Number(gpuManual.value))){
+        gpuW = Number(gpuManual.value);
+    }
+
+    const otherW = 80;
+    const totalLoad = cpuW + gpuW + otherW;
+
+    let safeRaw = totalLoad * 1.5;
+    let bestRaw = totalLoad * 2.0;
+
+    let safe = getNearestPower(safeRaw);
+    let best = getNearestPower(bestRaw);
+
+    //最低300W
+    if(safe < 300) safe = 300;
+    if(best < 300) best = 300;
+
+    //超高功耗显卡兜底
+    if(gpuW >= 500){
+        safe = 1000;
+        best = 1200;
+    }
+
+    totalWEl.innerText = totalLoad;
+    safeWEl.innerText = safe;
+    bestWEl.innerText = best;
+}
+
+//绑定事件
+cpuBrandFilter.addEventListener('change',renderCpuSelect);
+gpuBrandFilter.addEventListener('change',renderGpuSelect);
+cpuSelect.addEventListener('change',calcPower);
+gpuSelect.addEventListener('change',calcPower);
+cpuManual.addEventListener('input',calcPower);
+gpuManual.addEventListener('input',calcPower);
+
+//初始化渲染
+renderCpuSelect();
+renderGpuSelect();
+calcPower();
+</script>
+
+</body>
+</html>
