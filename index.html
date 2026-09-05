@@ -3,628 +3,1580 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>电脑电源推荐瓦数计算器-电脑小百科</title>
+    <title>多样式笔记模板生成器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=ZCOOL+QingKe+HuangYou&family=Noto+Sans+SC:wght@400;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Microsoft Yahei", sans-serif;
-        }
-        body {
-            background-color: #1f2937;
-            color: #f3f4f6;
-            padding-top: 64px;
-            padding-bottom:40px;
-            padding-left:20px;
-            padding-right:20px;
-        }
-        /* 顶部导航 */
-        .navbar{
-            position:fixed;
-            top:0;
-            left:0;
+        /* 开源字体 */
+        .font-hand{font-family:'ZCOOL KuaiLe',cursive;}
+        .font-round{font-family:'ZCOOL QingKe HuangYou',cursive;}
+        .font-song{font-family:'Noto Serif SC',serif;}
+        .font-sans{font-family:'Noto Sans SC',sans-serif;}
+
+        /* 通用纸张 */
+        .note-paper{
             width:100%;
-            background:#111827;
-            border-bottom:1px solid #374151;
-            z-index:99;
-        }
-        .nav-wrap{
-            max-width:720px;
-            margin:0 auto;
-            display:flex;
-        }
-        .nav-item{
-            padding:18px 22px;
-            color:#9ca3af;
-            text-decoration:none;
-            font-size:16px;
-            transition:0.2s;
-        }
-        .nav-item:hover{
-            color:#38bdf8;
-        }
-        .nav-item.active{
-            color:#38bdf8;
-            border-bottom:2px solid #38bdf8;
+            height:100%;
+            padding:24px;
+            box-sizing:border-box;
+            overflow:hidden;
+            position:relative;
         }
 
-        .container {
-            max-width: 720px;
-            margin: 0 auto;
-            background-color: #2d3748;
-            padding: 32px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        /* ========== 手账 · 笔记本类 ========== */
+
+        /* 模板1：线圈笔记本 */
+        .style-coil .note-paper{
+            background-color:#fffdf7;
+            background-image:linear-gradient(#cccccc 1px,transparent 1px);
+            background-size:100% 36px;
         }
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 24px;
-            color: #38bdf8;
+        .style-coil .coil-border{
+            background-image:radial-gradient(circle,#444444 3px,transparent 3px);
+            background-size:24px 32px;
+            background-repeat:repeat-y;
         }
-        .item-box {
-            margin-bottom: 24px;
+        .style-coil .note-paper::before{
+            content:"";
+            position:absolute;
+            top:-8px;left:50%;
+            transform:translateX(-50%) rotate(-3deg);
+            width:100px;height:28px;
+            background:rgba(255,214,102,.85);
+            border-left:2px dashed rgba(0,0,0,.08);
+            border-right:2px dashed rgba(0,0,0,.08);
+            z-index:1;
         }
-        .filter-row{
-            display:flex;
-            gap:12px;
-            margin-bottom:10px;
+
+        /* 模板2：简约横线本 */
+        .style-simple .note-paper{
+            background-color:#ffffff;
+            background-image:linear-gradient(#e2e8f0 1px,transparent 1px);
+            background-size:100% 34px;
         }
-        .filter-col{
-            flex:1;
+
+        /* 模板3：方格手账 */
+        .style-grid .note-paper{
+            background-color:#fffef8;
+            background-image:
+                linear-gradient(#dddddd 1px,transparent 1px),
+                linear-gradient(90deg,#dddddd 1px,transparent 1px);
+            background-size:28px 28px;
         }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 16px;
+
+        /* 模板4：错题本 */
+        .style-error .note-paper{
+            background-color:#fff5f5;
+            background-image:linear-gradient(#f8cccc 1px,transparent 1px);
+            background-size:100% 32px;
         }
-        select, input[type="number"] {
-            width: 100%;
-            padding: 12px 14px;
-            font-size: 15px;
-            border-radius: 8px;
-            border: none;
-            background-color: #4a5568;
-            color: #fff;
+
+        /* 模板5：彩边手账 */
+        .style-color-journal .note-paper{
+            background-color:#fffdf7;
+            background-image:linear-gradient(#cccccc 1px,transparent 1px);
+            background-size:100% 36px;
+            box-shadow:inset 6px 0 0 #ff6b6b,inset 12px 0 0 #ffd93d,inset 18px 0 0 #4dabf7;
         }
-        select:focus, input:focus {
-            outline: 2px solid #38bdf8;
+        .style-color-journal .note-paper::before{
+            content:"";
+            position:absolute;
+            right:12px;
+            top:12px;
+            width:42px;
+            height:42px;
+            background:#ffe066;
+            border:2px solid #333;
+            transform:rotate(8deg);
+            z-index:0;
         }
-        .input-row{
-            display:flex;
-            gap:12px;
-            margin-top:10px;
+        .style-color-journal .note-paper::after{
+            content:"";
+            position:absolute;
+            left:50%;
+            bottom:18px;
+            width:80px;
+            height:26px;
+            background:#a5d8ff;
+            border:2px solid #333;
+            transform:rotate(-4deg);
+            z-index:0;
         }
-        .input-col{
-            flex:1;
+
+        /* 模板6：马卡龙便签 */
+        .style-macaron .note-paper{
+            background-color:#ffffff;
+            background-image:
+                radial-gradient(circle at 12% 18%,#ffd6e0 10px,transparent 11px),
+                radial-gradient(circle at 85% 28%,#d4f0ff 14px,transparent 15px),
+                radial-gradient(circle at 22% 82%,#fff3c4 12px,transparent 13px),
+                linear-gradient(#f1f3f5 1px,transparent 1px);
+            background-size:auto,auto,auto,100% 34px;
         }
-        .result-card {
-            margin-top:30px;
-            padding:24px;
-            background:#1e293b;
+
+        /* 模板7：复古牛皮纸 */
+        .style-vintage .note-paper{
+            background-color:#f4e4c1;
+            background-image:linear-gradient(#c9a97a 1px,transparent 1px);
+            background-size:100% 32px;
+            box-shadow:inset 0 0 60px rgba(120,80,40,0.25);
+        }
+        .style-vintage .note-paper::before{
+            content:"";
+            position:absolute;
+            left:14px;
+            top:14px;
+            right:14px;
+            bottom:14px;
+            border:2px dashed #8b5a2b;
+            pointer-events:none;
+        }
+
+        /* 模板8：学霸双色笔记 */
+        .style-scholar .note-paper{
+            background-color:#ffffff;
+            background-image:linear-gradient(#eef3ff 1px,transparent 1px);
+            background-size:100% 30px;
+        }
+        .style-scholar .note-paper::before{
+            content:"";
+            position:absolute;
+            left:40px;
+            top:0;
+            bottom:0;
+            width:4px;
+            background:#4dabf7;
+        }
+
+        /* ========== 经典卡片风（参考 md2card） ========== */
+
+        /* 模板9：苹果备忘录 */
+        .style-apple .note-paper{
+            background-color:#ffffff;
+            background-image:linear-gradient(#f2f2f3 1px,transparent 1px);
+            background-size:100% 34px;
+            padding:98px 28px 28px;
+        }
+        .style-apple .note-paper::before{
+            content:"";
+            position:absolute;
+            top:0;left:0;right:0;
+            height:66px;
+            background:#fefdf9;
+            border-bottom:1px solid #e8e8e8;
+            z-index:1;
+        }
+        .style-apple .note-paper::after{
+            content:"";
+            position:absolute;
+            top:24px;left:28px;
+            width:20px;height:20px;
+            border-radius:6px;
+            background:#f5b932;
+            box-shadow:28px 1px 0 0 #ffd668,52px 1px 0 -3px #f5b932;
+            z-index:2;
+        }
+
+        /* 模板10：Instagram 渐变 */
+        .style-insta .note-paper{
+            background:linear-gradient(135deg,#f9ce34 0%,#ee2a7b 55%,#6228d7 100%);
+            padding:46px 42px;
+        }
+        .style-insta .note-paper::before{
+            content:"";
+            position:absolute;
+            inset:18px;
+            background:#ffffff;
+            border:2px solid #1a1a1a;
+            border-radius:20px;
+            box-shadow:6px 7px 0 rgba(26,26,26,.85);
+            z-index:1;
+        }
+
+        /* 模板11：字节范 */
+        .style-byte .note-paper{
+            background-color:#ffffff;
+            background-image:linear-gradient(#eef2f8 1px,transparent 1px);
+            background-size:100% 32px;
+            border-top:10px solid #3370ff;
+        }
+        .style-byte .note-paper::before{
+            content:"";
+            position:absolute;
+            top:34px;right:24px;
+            width:14px;height:14px;
+            background:#3370ff;
+            border-radius:3px;
+            transform:rotate(45deg);
+            z-index:1;
+        }
+        .style-byte .note-paper::after{
+            content:"";
+            position:absolute;
+            bottom:0;left:0;right:0;
+            height:6px;
+            background:#3370ff;
+            z-index:1;
+        }
+
+        /* 模板12：阿里橙 */
+        .style-ali .note-paper{
+            background:linear-gradient(180deg,#ffffff 0%,#ffffff 60%,#fdf3e7 100%);
+        }
+        .style-ali .note-paper::before{
+            content:"";
+            position:absolute;
+            top:0;left:0;right:0;
+            height:10px;
+            background:linear-gradient(90deg,#fb923c,#f97316);
+            z-index:1;
+        }
+        .style-ali .note-paper::after{
+            content:"";
+            position:absolute;
+            bottom:-60px;right:-50px;
+            width:220px;height:220px;
+            border-radius:50%;
+            background:radial-gradient(circle,rgba(249,115,22,.28) 0%,rgba(249,115,22,.10) 55%,transparent 72%);
+            z-index:0;
+        }
+
+        /* 模板13：商务简报 */
+        .style-business .note-paper{
+            background-color:#ffffff;
+            background-image:linear-gradient(#eceff3 1px,transparent 1px);
+            background-size:100% 34px;
+            padding:104px 26px 26px;
+        }
+        .style-business .note-paper::before{
+            content:"";
+            position:absolute;
+            top:0;left:0;right:0;
+            height:74px;
+            background:#16324f;
+            z-index:1;
+        }
+        .style-business .note-paper::after{
+            content:"";
+            position:absolute;
+            top:74px;left:0;right:0;
+            height:6px;
+            background:linear-gradient(90deg,#c9302c 0 33%,#f0a500 33% 66%,#1f4e79 66% 100%);
+            z-index:1;
+        }
+
+        /* 模板14：紫色小红书 */
+        .style-xhs .note-paper{
+            background:linear-gradient(150deg,#9b6be8 0%,#c46be0 100%);
+            padding:48px 42px;
+        }
+        .style-xhs .note-paper::before{
+            content:"";
+            position:absolute;
+            inset:18px;
+            background:#ffffff;
+            border:2px solid #1a1a1a;
+            border-radius:20px;
+            box-shadow:6px 7px 0 rgba(26,26,26,.85);
+            z-index:1;
+        }
+        .style-xhs .note-paper::after{
+            content:"";
+            position:absolute;
+            top:9px;left:50%;
+            transform:translateX(-50%);
+            width:66px;height:18px;
+            background:linear-gradient(#f2ecfa,#ffffff);
+            border:2px solid #1a1a1a;
+            border-top:none;
+            border-radius:0 0 14px 14px;
+            z-index:2;
+        }
+
+        /* ========== 艺术创意风 ========== */
+
+        /* 模板15：波普艺术 */
+        .style-pop .note-paper{
+            background-color:#ffd23f;
+            background-image:
+                radial-gradient(#ff5e5b 2.5px,transparent 3px),
+                radial-gradient(#3a86ff 2.5px,transparent 3px);
+            background-size:36px 36px,36px 36px;
+            background-position:0 0,18px 18px;
+            padding:48px 44px;
+        }
+        .style-pop .note-paper::before{
+            content:"";
+            position:absolute;
+            inset:16px;
+            background:#fffdf5;
+            border:4px solid #111;
+            border-radius:6px;
+            box-shadow:8px 8px 0 #111;
+            z-index:1;
+        }
+
+        /* 模板16：艺术装饰 */
+        .style-deco .note-paper{
+            background-color:#0e2a23;
+            background-image:linear-gradient(rgba(212,175,55,.09) 1px,transparent 1px);
+            background-size:100% 34px;
+        }
+        .style-deco .note-paper::before{
+            content:"";
+            position:absolute;
+            inset:12px;
+            border:2px solid #d4af37;
+            z-index:1;
+        }
+        .style-deco .note-paper::after{
+            content:"";
+            position:absolute;
+            inset:19px;
+            border:1px solid rgba(212,175,55,.55);
+            z-index:1;
+        }
+        .style-deco .step-subtitle{border-color:#d4af37;}
+
+        /* 模板17：玻璃拟态 */
+        .style-glass .note-paper{
+            background:linear-gradient(135deg,#667eea 0%,#764ba2 48%,#f093fb 100%);
+            padding:48px 44px;
+        }
+        .style-glass .note-paper::before{
+            content:"";
+            position:absolute;
+            inset:20px;
+            background:rgba(255,255,255,.62);
+            border:1.5px solid rgba(255,255,255,.95);
+            border-radius:22px;
+            box-shadow:0 8px 32px rgba(31,38,135,.25);
+            z-index:1;
+        }
+        .style-glass .note-paper::after{
+            content:"";
+            position:absolute;
+            top:34px;left:-30px;
+            width:90px;height:90px;
+            border-radius:50%;
+            background:rgba(255,255,255,.25);
+            z-index:0;
+        }
+
+        /* 模板18：梦幻渐变 */
+        .style-dreamy .note-paper{
+            background:linear-gradient(160deg,#e0c3fc 0%,#8ec5fc 100%);
+            padding:46px 42px;
+        }
+        .style-dreamy .note-paper::before{
+            content:"";
+            position:absolute;
+            inset:16px;
+            background:rgba(255,255,255,.85);
+            border-radius:18px;
+            z-index:1;
+        }
+        .style-dreamy .note-paper::after{
+            content:"✦";
+            position:absolute;
+            top:26px;right:34px;
+            color:rgba(255,255,255,.9);
+            font-size:20px;
+            z-index:0;
+        }
+
+        /* 模板19：水彩艺术 */
+        .style-watercolor .note-paper{
+            background-color:#fdfdff;
+            background-image:
+                radial-gradient(circle at 8% 6%,rgba(255,182,193,.4) 0 58px,transparent 59px),
+                radial-gradient(circle at 92% 12%,rgba(173,216,230,.38) 0 68px,transparent 69px),
+                radial-gradient(circle at 88% 92%,rgba(255,218,185,.42) 0 62px,transparent 63px),
+                radial-gradient(circle at 10% 94%,rgba(197,239,191,.42) 0 56px,transparent 57px);
+        }
+
+        /* 模板20：日本杂志 */
+        .style-jp .note-paper{
+            background-color:#fffefc;
+            background-image:linear-gradient(#f0ebe2 1px,transparent 1px);
+            background-size:100% 36px;
+        }
+        .style-jp .note-paper::before{
+            content:"";
+            position:absolute;
+            top:20px;right:22px;
+            width:64px;height:64px;
+            border-radius:50%;
+            background:#d0021b;
+            z-index:1;
+        }
+        .style-jp .note-paper::after{
+            content:"记";
+            position:absolute;
+            top:32px;right:38px;
+            color:#ffffff;
+            font-family:'Noto Serif SC',serif;
+            font-size:26px;
+            font-weight:700;
+            z-index:2;
+        }
+
+        /* 模板21：中国传统 */
+        .style-chinese .note-paper{
+            background-color:#f8f2e4;
+            background-image:linear-gradient(rgba(140,31,40,.07) 1px,transparent 1px);
+            background-size:100% 34px;
+        }
+        .style-chinese .note-paper::before{
+            content:"";
+            position:absolute;
+            inset:10px;
+            border:3px double #8c1f28;
+            z-index:1;
+            pointer-events:none;
+        }
+        .style-chinese .note-paper::after{
+            content:"记";
+            position:absolute;
+            bottom:24px;right:24px;
+            width:36px;height:36px;
+            line-height:36px;
+            text-align:center;
+            background:#a52a2a;
+            color:#fdf6e3;
+            font-family:'Noto Serif SC',serif;
+            font-size:19px;
+            border-radius:4px;
+            z-index:2;
+        }
+
+        /* ========== 柔和清新风 ========== */
+
+        /* 模板22：温暖柔和 */
+        .style-warm .note-paper{
+            background-color:#fdf6ee;
+            background-image:linear-gradient(#f0e0d0 1px,transparent 1px);
+            background-size:100% 34px;
+        }
+        .style-warm .note-paper::before{
+            content:"";
+            position:absolute;
+            inset:12px;
+            border:1.5px solid #e8c9a8;
+            border-radius:14px;
+            z-index:1;
+            pointer-events:none;
+        }
+
+        /* 模板23：简约高级灰 */
+        .style-gray .note-paper{
+            background-color:#f5f5f7;
+            background-image:linear-gradient(#e5e5ea 1px,transparent 1px);
+            background-size:100% 36px;
+        }
+        .style-gray .note-paper::before{
+            content:"";
+            position:absolute;
+            top:0;right:0;
+            width:130px;height:130px;
+            background:linear-gradient(225deg,#d1d1d6 50%,transparent 50%);
+            z-index:1;
+        }
+
+        /* 模板24：极简黑白 */
+        .style-mono .note-paper{
+            background-color:#ffffff;
+            background-image:linear-gradient(#ededed 1px,transparent 1px);
+            background-size:100% 40px;
+            border-top:16px solid #000000;
+        }
+        .style-mono .note-paper::before{
+            content:"";
+            position:absolute;
+            bottom:18px;right:20px;
+            width:34px;height:34px;
+            border:3px solid #000;
+            border-radius:50%;
+            z-index:1;
+        }
+
+        /* 模板25：清新自然 */
+        .style-nature .note-paper{
+            background-color:#f4faf0;
+            background-image:linear-gradient(#d8ecd0 1px,transparent 1px);
+            background-size:100% 34px;
+        }
+        .style-nature .note-paper::before{
+            content:"";
+            position:absolute;
+            top:16px;right:18px;
+            width:52px;height:52px;
+            background:radial-gradient(circle at 35% 35%,#b2f2bb,#69db7c);
+            border-radius:50% 50% 50% 0;
+            transform:rotate(45deg);
+            opacity:.85;
+            z-index:1;
+        }
+        .style-nature .note-paper::after{
+            content:"";
+            position:absolute;
+            bottom:16px;left:18px;
+            width:40px;height:40px;
+            background:radial-gradient(circle at 35% 35%,#d3f9d8,#8ce99a);
+            border-radius:50% 0 50% 50%;
+            transform:rotate(-45deg);
+            opacity:.7;
+            z-index:1;
+        }
+
+        /* 模板26：儿童童话 */
+        .style-fairytale .note-paper{
+            background:linear-gradient(180deg,#dbeeff 0%,#fff0f6 55%,#fffbe6 100%);
+            padding:46px 42px;
+        }
+        .style-fairytale .note-paper::before{
+            content:"";
+            position:absolute;
+            inset:14px;
+            background:rgba(255,255,255,.78);
+            border:2.5px dashed #ffc9de;
+            border-radius:20px;
+            z-index:1;
+        }
+        .style-fairytale .note-paper::after{
+            content:"✦ ✦ ✦";
+            position:absolute;
+            top:24px;right:30px;
+            color:#f7b5c9;
+            font-size:15px;
+            letter-spacing:5px;
+            z-index:2;
+        }
+
+        /* 模板27：青野晨光 */
+        .style-meadow .note-paper{
+            background-color:#f1f8e9;
+            background-image:
+                linear-gradient(rgba(104,159,99,.16) 1px,transparent 1px),
+                linear-gradient(180deg,rgba(255,248,225,.9),rgba(232,245,233,.9));
+            background-size:100% 34px,auto;
+        }
+        .style-meadow .note-paper::before{
+            content:"";
+            position:absolute;
+            top:18px;left:22px;
+            width:11px;height:11px;
+            border-radius:50%;
+            background:#ffd54f;
+            box-shadow:17px 5px 0 #a5d6a7,34px -2px 0 #90caf9;
+            z-index:1;
+        }
+
+        /* 模板28：复古打字机 */
+        .style-typewriter .note-paper{
+            background-color:#f7f3e8;
+            background-image:linear-gradient(#ddd3b8 1px,transparent 1px);
+            background-size:100% 30px;
+        }
+        .style-typewriter .note-paper::before{
+            content:"";
+            position:absolute;
+            top:12px;left:50%;
+            transform:translateX(-50%);
+            width:60%;height:2px;
+            background:#b5a179;
+            z-index:1;
+        }
+        .style-typewriter .note-paper::after{
+            content:"";
+            position:absolute;
+            bottom:12px;left:50%;
+            transform:translateX(-50%);
+            width:60%;height:2px;
+            background:#b5a179;
+            z-index:1;
+        }
+
+        /* ========== 暗色科技风 ========== */
+
+        /* 模板29：暗黑科技 */
+        .style-dark .note-paper{
+            background-color:#0d1117;
+            background-image:linear-gradient(rgba(0,229,255,.08) 1px,transparent 1px);
+            background-size:100% 32px;
+        }
+        .style-dark .note-paper::before{
+            content:"";
+            position:absolute;
+            top:0;left:0;right:0;
+            height:5px;
+            background:linear-gradient(90deg,#00e5ff,#7c4dff);
+            z-index:1;
+        }
+        .style-dark .note-paper::after{
+            content:"";
+            position:absolute;
+            bottom:0;left:0;right:0;
+            height:5px;
+            background:linear-gradient(90deg,#7c4dff,#00e5ff);
+            z-index:1;
+        }
+        .style-dark .step-subtitle{border-color:rgba(0,229,255,.8);}
+
+        /* 模板30：赛博朋克 */
+        .style-cyber .note-paper{
+            background-color:#0a0a12;
+            background-image:
+                repeating-linear-gradient(0deg,rgba(255,46,151,.05) 0 2px,transparent 2px 4px),
+                linear-gradient(rgba(0,240,255,.09) 1px,transparent 1px);
+            background-size:auto,100% 34px;
+        }
+        .style-cyber .note-paper::before{
+            content:"";
+            position:absolute;
+            top:0;left:0;right:0;
+            height:6px;
+            background:linear-gradient(90deg,#00f0ff,#ff2e97);
+            box-shadow:0 0 12px rgba(255,46,151,.8);
+            z-index:1;
+        }
+        .style-cyber .note-paper::after{
+            content:"";
+            position:absolute;
+            bottom:0;left:0;right:0;
+            height:6px;
+            background:linear-gradient(90deg,#ff2e97,#00f0ff);
+            box-shadow:0 0 12px rgba(0,240,255,.8);
+            z-index:1;
+        }
+        .style-cyber .step-subtitle{border-color:rgba(0,240,255,.9);}
+
+        /* 顶部导航 */
+        html{scroll-behavior:smooth;}
+        .nav-active{background:#eff6ff;color:#1d4ed8;}
+
+        /* 模板风格库缩略图 */
+        .gal-item{
+            position:relative;
             border-radius:10px;
-            border:1px solid #334155;
+            overflow:hidden;
+            aspect-ratio:3/4;
+            box-shadow:0 2px 8px rgba(15,23,42,.15);
+            cursor:pointer;
+            border:3px solid transparent;
+            transition:transform .15s,border-color .15s;
         }
-        .result-title{
-            font-size:17px;
-            margin-bottom:16px;
+        .gal-item:hover{transform:translateY(-3px);}
+        .gal-item.active{border-color:#3b82f6;}
+        .gal-item .note-paper{padding:14px !important;}
+        .gal-item .mini-title{font-weight:700;font-size:11px;line-height:1.3;margin-bottom:4px;position:relative;z-index:2;}
+        .gal-item .mini-body{font-size:8px;line-height:1.6;position:relative;z-index:2;}
+        .gal-item .step-subtitle{border-width:1px;padding:0 3px;border-radius:3px;font-size:8px;}
+
+        /* 正文内 # 大标题（起点强调式下划线由 .md-h1-rule 呈现） */
+        .md-h1{
+            font-weight:700;
+            font-size:1.3em;
+            line-height:1.45;
+            margin:12px 0 6px;
         }
-        .row-item{
-            margin:14px 0;
+        .md-h1-rule{
+            height:4px;
+            border-radius:2px;
+            margin:0 0 10px;
         }
-        .power-safe{
-            font-size:24px;
-            color:#34d399;
-            font-weight:bold;
+
+        /* 版式片段预设样式 */
+        .md-divider{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            margin:10px 0;
+            font-size:12px;
+            opacity:.75;
         }
-        .power-best{
-            font-size:24px;
-            color:#fbbf24;
-            font-weight:bold;
+        .md-divider::before,
+        .md-divider::after{
+            content:"";
+            flex:1;
+            border-top:2px dashed currentColor;
         }
-        .tip-text{
-            margin-top:18px;
-            font-size:14px;
-            color:#9ca3af;
+        .md-quote{
+            margin:8px 0;
+            padding:8px 12px;
+            border-left:4px solid;
+            border-radius:0 8px 8px 0;
             line-height:1.7;
         }
-        .split-line{
-            height:1px;
-            background:#475569;
-            margin:24px 0;
-        }
-        /* 友情链接 */
-        .friend-links{
-            max-width:720px;
-            margin:24px auto 0;
-            text-align:center;
-            font-size:14px;
-            color:#9ca3af;
+        .md-summary{
+            margin:12px 0 4px;
+            padding:12px 14px 10px;
+            border:2px solid;
+            border-radius:12px;
+            font-weight:700;
             line-height:1.8;
         }
-        .friend-links a{
-            color:#38bdf8;
-            text-decoration:none;
-            margin:0 8px;
+        .md-summary-tag{
+            display:inline-block;
+            color:#ffffff;
+            font-size:.72em;
+            padding:1px 8px;
+            border-radius:10px;
+            margin-right:6px;
+            vertical-align:2px;
         }
-        .friend-links a:hover{
-            text-decoration:underline;
+        .md-cards{
+            list-style:none;
+            margin:8px 0;
+            padding:0;
         }
-        /* 底部版权 */
-        .footer{
-            max-width:720px;
-            margin:14px auto 0;
+        .md-cards li{
+            background:rgba(127,127,127,.13);
+            border-radius:10px;
+            padding:7px 12px;
+            margin:6px 0;
+            line-height:1.7;
+        }
+        .md-num{
+            display:inline-block;
+            min-width:20px;
+            height:20px;
+            line-height:20px;
+            border-radius:50%;
+            color:#ffffff;
             text-align:center;
-            font-size:13px;
-            color:#9ca3af;
-            line-height:1.8;
+            font-size:12px;
+            font-weight:700;
+            margin-right:7px;
         }
-        .footer a{
-            color:#38bdf8;
-            text-decoration:none;
+        .md-li{
+            padding-left:1.2em;
+            text-indent:-1.2em;
+        }
+
+        /* 贴纸 / 片段插入按钮 */
+        .sticker-btn,.snippet-btn{
+            font-size:12px;
+            padding:3px 8px;
+            border:1px solid #cbd5e1;
+            border-radius:6px;
+            background:#f8fafc;
+            cursor:pointer;
+        }
+        .sticker-btn:hover,.snippet-btn:hover{
+            background:#e0e9ff;
+            border-color:#93c5fd;
+        }
+
+        /* 水印层：固定铺满笔记卡片，不依赖 Tailwind 运行时类 */
+        #wmLayer{
+            position:absolute;
+            top:0;left:0;right:0;bottom:0;
+            overflow:hidden;
+            pointer-events:none;
+        }
+
+        /* 预览区直接编辑 */
+        .inline-editing{
+            outline:1.5px dashed rgba(59,130,246,.75);
+            outline-offset:4px;
+            border-radius:4px;
+            cursor:text;
+            min-width:24px;
+            min-height:1em;
+        }
+        .inline-editing:focus{outline-style:solid;}
+
+        /* ========== 防盗版保护 ========== */
+        /* 禁止整页文本选中（输入框 / 编辑区放行） */
+        body{
+            -webkit-user-select:none;
+            -moz-user-select:none;
+            user-select:none;
+        }
+        input,textarea,select,
+        [contenteditable="true"],.inline-editing{
+            -webkit-user-select:text;
+            user-select:text;
+        }
+        /* 禁止图片拖拽另存 */
+        img{
+            -webkit-user-drag:none;
+        }
+        /* 打印 / 另存为 PDF 时输出空白页 */
+        @media print{
+            html,body{display:none !important;}
+        }
+
+        /* 步骤副标题 */
+        .step-subtitle{
+            display:inline-block;
+            padding:2px 10px;
+            border-radius:999px;
+            border:2px solid rgba(51,51,51,.85);
+            box-decoration-break:clone;
+            -webkit-box-decoration-break:clone;
+        }
+        /* 现代卡片风模板：无描边纯胶囊 */
+        .style-apple .step-subtitle,
+        .style-ali .step-subtitle,
+        .style-insta .step-subtitle,
+        .style-xhs .step-subtitle,
+        .style-glass .step-subtitle,
+        .style-dreamy .step-subtitle{
+            border:none;
+            padding:3px 12px;
+        }
+
+        /* 线圈侧边栏 */
+        .coil-border{
+            width:34px;
+            background-image:radial-gradient(circle,#444444 3px,transparent 3px);
+            background-size:24px 32px;
+            background-repeat:repeat-y;
+            background-color:#f1f3f5;
         }
     </style>
 </head>
-<body>
-<!--顶部导航栏-->
-<div class="navbar">
-    <div class="nav-wrap">
-        <a class="nav-item active" href="index.html">首页</a>
-        <a class="nav-item" href="https://xiaobaike.dpdns.org/">软件下载</a>
+<!-- 顶部导航 -->
+<nav class="fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+        <a href="#editor" class="font-bold text-lg">📒 笔记模板生成器</a>
+        <div class="flex items-center gap-1 text-sm">
+            <a href="#editor" class="nav-link px-3 py-1.5 rounded-md hover:bg-slate-100">✏️ 编辑器</a>
+            <a href="#gallery" class="nav-link px-3 py-1.5 rounded-md hover:bg-slate-100">🎨 模板风格</a>
+            <a href="#guide" class="nav-link px-3 py-1.5 rounded-md hover:bg-slate-100">📖 使用说明</a>
+            <a href="https://xiaobaike.dpdns.org/" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-md hover:bg-slate-100 hidden sm:inline">⬇️ 软件下载</a>
+        </div>
     </div>
-</div>
+</nav>
 
-<div class="container">
-    <h1>电脑电源瓦数推荐计算器-电脑小百科</h1>
+<div class="max-w-6xl mx-auto p-4 pt-20">
+    <section id="editor" class="scroll-mt-16">
+    <h1 class="text-2xl font-bold text-center mb-1">📒 多样式笔记模板生成器</h1>
+    <p class="text-center text-sm text-slate-500 mb-4">30 款模板 · 切换模板自动套用推荐配色与字体 · 实时预览</p>
+    <div class="grid md:grid-cols-2 gap-6">
+        <!-- 控制面板 -->
+        <div class="bg-white rounded-xl shadow p-5">
+            <h2 class="text-lg font-semibold mb-3">编辑参数</h2>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-sm">选择笔记模板</label>
+                    <select id="styleSelect" class="w-full border p-2 rounded">
+                        <optgroup label="📚 手账 · 笔记本">
+                            <option value="style-coil">①线圈笔记本</option>
+                            <option value="style-simple">②简约横线本</option>
+                            <option value="style-grid">③方格手账</option>
+                            <option value="style-error">④错题笔记本</option>
+                            <option value="style-color-journal">⑤彩边手账模板</option>
+                            <option value="style-macaron">⑥马卡龙便签模板</option>
+                            <option value="style-vintage">⑦复古牛皮纸模板</option>
+                            <option value="style-scholar">⑧学霸双色笔记模板</option>
+                        </optgroup>
+                        <optgroup label="🍎 经典卡片风">
+                            <option value="style-apple">⑨苹果备忘录</option>
+                            <option value="style-insta">⑩Instagram渐变卡</option>
+                            <option value="style-byte">⑪字节范蓝色卡</option>
+                            <option value="style-ali">⑫阿里橙活力卡</option>
+                            <option value="style-business">⑬商务简报模板</option>
+                            <option value="style-xhs">⑭紫色小红书模板</option>
+                        </optgroup>
+                        <optgroup label="🎨 艺术创意风">
+                            <option value="style-pop">⑮波普艺术模板</option>
+                            <option value="style-deco">⑯艺术装饰模板</option>
+                            <option value="style-glass">⑰玻璃拟态模板</option>
+                            <option value="style-dreamy">⑱梦幻渐变模板</option>
+                            <option value="style-watercolor">⑲水彩艺术模板</option>
+                            <option value="style-jp">⑳日本杂志模板</option>
+                            <option value="style-chinese">㉑中国传统模板</option>
+                        </optgroup>
+                        <optgroup label="🌅 柔和清新风">
+                            <option value="style-warm">㉒温暖柔和模板</option>
+                            <option value="style-gray">㉓简约高级灰模板</option>
+                            <option value="style-mono">㉔极简黑白模板</option>
+                            <option value="style-nature">㉕清新自然模板</option>
+                            <option value="style-fairytale">㉖儿童童话模板</option>
+                            <option value="style-meadow">㉗青野晨光模板</option>
+                            <option value="style-typewriter">㉘复古打字机模板</option>
+                        </optgroup>
+                        <optgroup label="🌙 暗色科技风">
+                            <option value="style-dark">㉙暗黑科技模板</option>
+                            <option value="style-cyber">㉚赛博朋克模板</option>
+                        </optgroup>
+                    </select>
+                </div>
 
-    <div class="item-box">
-        <div class="filter-row">
-            <div class="filter-col">
-                <label>CPU品牌筛选</label>
-                <select id="cpuBrandFilter">
-                    <option value="all">全部CPU</option>
-                    <option value="intel">Intel</option>
-                    <option value="amd">AMD</option>
-                </select>
+                <div>
+                    <label class="block text-sm">选择开源字体</label>
+                    <select id="fontSelect" class="w-full border p-2 rounded">
+                        <option value="font-hand">站酷快乐体｜手写风</option>
+                        <option value="font-round">站酷庆科黄油体｜圆润可爱</option>
+                        <option value="font-song">思源宋体｜文艺印刷感</option>
+                        <option value="font-sans">思源黑体｜干净商务</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm">大标题</label>
+                    <input id="titleInput" class="w-full border p-2 rounded" value="个人认为目前AI漫剧制作最简单的方法">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-sm block">标题字号(px)</label>
+                        <input type="number" id="titleFontSize" value="28" class="w-full border p-2 rounded">
+                    </div>
+                    <div>
+                        <label class="text-sm block">正文字号(px)</label>
+                        <input type="number" id="contentFontSize" value="17" class="w-full border p-2 rounded">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm">正文内容<br>
+                        <small>支持标记：<code class="bg-slate-100 px-1 rounded">#</code> 一级大标题　<code class="bg-slate-100 px-1 rounded">##</code> 小标题高亮块　其余为正文段落</small>
+                    </label>
+                    <textarea id="contentInput" rows="9" class="w-full border p-2 rounded">## 第一步：拆小说，定设定
+把小说拆解为人物、关系、场景和分镜描述，形成统一设定，方便后续画面保持一致。
+
+## 第二步：静态变动态，生成镜头
+将每个分镜的静态画面导入生成工具，输出动态视频片段，保证剧情素材完整连贯。
+
+## 第三步：剪辑成片，完善细节
+用剪映拼接素材，添加配音、字幕和音乐，调整节奏，一条AI漫剧就完成了！</textarea>
+                </div>
+
+                <div>
+                    <label class="text-sm block mb-1">贴纸插入 <small class="text-slate-400">｜点击插入到正文光标处</small></label>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button type="button" class="sticker-btn" data-insert="➡️ ">➡️ 箭头</button>
+                        <button type="button" class="sticker-btn" data-insert="⭐ ">⭐ 星星</button>
+                        <button type="button" class="sticker-btn" data-insert="📌 ">📌 图钉</button>
+                        <button type="button" class="sticker-btn" data-insert="📎 ">📎 回形针</button>
+                        <button type="button" class="sticker-btn" data-insert="🔖 ">🔖 标签</button>
+                        <button type="button" class="sticker-btn" data-insert="① ">① 编号</button>
+                        <button type="button" class="sticker-btn" data-insert="▫ ">▫ 项目符号</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-sm block mb-1">版式片段 <small class="text-slate-400">｜一键插入预设版式</small></label>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button type="button" class="snippet-btn" data-insert-block="# 在这里输入大标题">🔴 大标题块</button>
+                        <button type="button" class="snippet-btn" data-insert-block="---">📋 分栏分割线</button>
+                        <button type="button" class="snippet-btn" data-insert-block="- 要点一：描述文字&#10;- 要点二：描述文字&#10;- 要点三：描述文字">📇 卡片列表</button>
+                        <button type="button" class="snippet-btn" data-insert-block="> 在这里输入重点内容">❗ 重点框</button>
+                        <button type="button" class="snippet-btn" data-insert-block=">> 在这里输入总结内容">📝 总结区</button>
+                    </div>
+                </div>
+
             </div>
         </div>
-        <label>选择CPU型号</label>
-        <select id="cpuSelect"></select>
-    </div>
 
-    <div class="item-box">
-        <div class="filter-row">
-            <div class="filter-col">
-                <label>显卡品牌筛选</label>
-                <select id="gpuBrandFilter">
-                    <option value="all">全部显卡</option>
-                    <option value="nvidia">N卡(NVIDIA)</option>
-                    <option value="amd">A卡(AMD)</option>
-                </select>
+        <!-- 预览区域 -->
+        <div>
+            <!-- 预览顶部工具条 -->
+            <div class="bg-white rounded-xl shadow p-4 mb-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-slate-400 font-medium">配色 / 比例 / 导出</span>
+                    <label class="flex items-center gap-1 text-xs cursor-pointer">
+                        <input type="checkbox" id="editInline" class="accent-blue-500"> ✏️ 预览区直接编辑
+                    </label>
+                </div>
+                <div class="grid grid-cols-4 gap-2">
+                    <div>
+                        <label class="text-xs block text-slate-500 mb-1">标题颜色</label>
+                        <input type="color" id="titleColor" value="#1e3a8a" class="w-full h-9">
+                    </div>
+                    <div>
+                        <label class="text-xs block text-slate-500 mb-1">正文颜色</label>
+                        <input type="color" id="textColor" value="#111111" class="w-full h-9">
+                    </div>
+                    <div>
+                        <label class="text-xs block text-slate-500 mb-1">步骤文字色</label>
+                        <input type="color" id="stepTextColor" value="#0b2447" class="w-full h-9">
+                    </div>
+                    <div>
+                        <label class="text-xs block text-slate-500 mb-1">步骤背景色</label>
+                        <input type="color" id="stepBgColor" value="#ffec66" class="w-full h-9">
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-2 mt-3">
+                    <select id="ratioSel" class="border p-2 rounded text-sm">
+                        <option value="9/16">9:16 竖版</option>
+                        <option value="3/4" selected>3:4 笔记图</option>
+                        <option value="4/5">4:5 小红书</option>
+                        <option value="1/1">1:1 正方形</option>
+                        <option value="16/9">16:9 横版</option>
+                    </select>
+                    <button id="randomBtn" class="bg-purple-500 hover:bg-purple-600 text-white py-2 rounded text-sm">🎲 随机换模板</button>
+                    <button id="downloadBtn" class="bg-green-500 hover:bg-green-600 text-white py-2 rounded text-sm">📥 导出PNG图片</button>
+                </div>
+
+                <!-- 水印设置 -->
+                <div class="mt-3 pt-3 border-t border-slate-100 space-y-2">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <label class="flex items-center gap-1 text-sm font-medium">
+                            <input type="checkbox" id="wmEnabled" class="accent-blue-500"> 💧 水印
+                        </label>
+                        <select id="wmType" class="border rounded p-1 text-xs">
+                            <option value="text">文字水印</option>
+                            <option value="image">图片水印</option>
+                        </select>
+                        <input id="wmText" class="border rounded p-1 text-xs flex-1 min-w-[110px]" value="笔记模板生成器" placeholder="水印文字">
+                        <input type="file" id="wmImage" accept="image/*" class="text-xs border rounded p-1 flex-1 hidden">
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <select id="wmPos" class="border rounded p-1 text-xs">
+                            <option value="tile">平铺</option>
+                            <option value="center">居中</option>
+                            <option value="corner">右下角</option>
+                        </select>
+                        <select id="wmLayerSel" class="border rounded p-1 text-xs">
+                            <option value="back">内容下方(衬底)</option>
+                            <option value="front">内容上方(浮层)</option>
+                        </select>
+                        <label class="text-xs text-slate-500">透明度<span id="wmOpacityVal">18</span>%</label>
+                        <input type="range" id="wmOpacity" min="3" max="100" value="18" class="w-20 accent-blue-500">
+                        <label class="text-xs text-slate-500">大小</label>
+                        <input type="range" id="wmSize" min="10" max="72" value="18" class="w-20 accent-blue-500">
+                    </div>
+                </div>
+            </div>
+
+            <div id="captureArea" class="overflow-hidden rounded-lg shadow-lg relative style-coil" style="aspect-ratio:3/4;">
+                <div class="w-full h-full flex">
+                    <div id="coilSide" class="coil-border"></div>
+                    <div id="paperWrap" class="note-paper font-hand">
+                        <div id="previewTitle" class="font-bold mb-3 relative" style="position:relative;z-index:2;"></div>
+                        <div id="previewContent" class="relative" style="font-size:17px;line-height:1.9;position:relative;z-index:2;"></div>
+                    </div>
+                </div>
+                <div id="wmLayer" class="absolute inset-0 pointer-events-none hidden"></div>
             </div>
         </div>
-        <label>选择显卡型号</label>
-        <select id="gpuSelect"></select>
     </div>
+    </section>
 
-    <div class="split-line"></div>
+    <!-- 模板风格库 -->
+    <section id="gallery" class="mt-10 scroll-mt-16">
+        <h2 class="text-xl font-bold mb-1">🎨 模板风格库</h2>
+        <p class="text-sm text-slate-500 mb-4">共 30 款，点击任意缩略图即可套用并回到编辑器</p>
+        <div id="galleryGrid" class="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-6 gap-3"></div>
+    </section>
 
-    <div class="item-box">
-        <label>🔧 手动输入功耗（输入后优先覆盖下拉选择）</label>
-        <div class="input-row">
-            <div class="input-col">
-                <label>CPU满载功耗(W)</label>
-                <input type="number" id="cpuManual" placeholder="留空使用下拉">
+    <!-- 使用说明 -->
+    <section id="guide" class="mt-10 scroll-mt-16">
+        <h2 class="text-xl font-bold mb-4">📖 使用说明</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white rounded-xl shadow p-5">
+                <div class="text-2xl mb-2">①</div>
+                <h3 class="font-semibold mb-1">选模板</h3>
+                <p class="text-sm text-slate-600">30 款风格任选，切换模板会自动套用该风格的推荐配色与字体，也可手动微调。</p>
             </div>
-            <div class="input-col">
-                <label>显卡TBP功耗(W)</label>
-                <input type="number" id="gpuManual" placeholder="留空使用下拉">
+            <div class="bg-white rounded-xl shadow p-5">
+                <div class="text-2xl mb-2">②</div>
+                <h3 class="font-semibold mb-1">写内容</h3>
+                <p class="text-sm text-slate-600">正文支持简单标记：<code class="bg-slate-100 px-1 rounded">#</code> 大标题，<code class="bg-slate-100 px-1 rounded">##</code> 小标题，<code class="bg-slate-100 px-1 rounded">---</code> 分割线，<code class="bg-slate-100 px-1 rounded">- </code> 卡片列表，<code class="bg-slate-100 px-1 rounded">&gt;</code> 重点框，<code class="bg-slate-100 px-1 rounded">&gt;&gt;</code> 总结区；也可点击正文下方的贴纸 / 版式按钮插入，或勾选「预览区直接编辑」在笔记图上直接改字。</p>
+            </div>
+            <div class="bg-white rounded-xl shadow p-5">
+                <div class="text-2xl mb-2">③</div>
+                <h3 class="font-semibold mb-1">导出图片</h3>
+                <p class="text-sm text-slate-600">在预览顶部工具条选择图片比例，点击「导出PNG图片」即可保存 2 倍高清笔记图。</p>
+            </div>
+            <div class="bg-white rounded-xl shadow p-5">
+                <div class="text-2xl mb-2">④</div>
+                <h3 class="font-semibold mb-1">加水印</h3>
+                <p class="text-sm text-slate-600">支持文字 / 图片水印，可平铺、居中或放右下角，并能选择衬在内容下方或覆盖在内容上方。</p>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="result-card">
-        <div class="result-title">📊 计算结果</div>
-        <div>整机估算满载功耗：<span id="totalW">0</span> W</div>
-
-        <div class="row-item">
-            <div>✅稳妥推荐(×1.5倍余量，默认BIOS不超频)：<span class="power-safe" id="safeW">0</span> W 额定</div>
-        </div>
-        <div class="row-item">
-            <div>⭐最佳推荐(×2倍余量，超频/PBO/非公显卡/后期升级)：<span class="power-best" id="bestW">0</span> W 额定</div>
-        </div>
-
-        <div class="tip-text">
-💡提示：CPU为主板默认BIOS下长时间满载功耗，不是散热TDP；显卡为官方TBP典型板载功耗，老平台、二手非公超频显卡实际功耗会更高。稳妥档位适合默认设置；最佳适合超频、多硬盘、未来升级；输出为市面常见电源额定功率，优先铜牌/金牌电源。手动输入数值会优先覆盖下拉选择。老二手硬件建议尽量往高一档电源选择。
-        </div>
-    </div>
-</div>
-
-<!--友情链接-->
-<div class="friend-links">
-    友情链接：<a href="https://xiaobaike.dpdns.org/" target="_blank">电脑软件下载</a>
-</div>
-
-<!--底部版权声明-->
-<div class="footer">
-    © 2026 <a href="https://space.bilibili.com/595098830">@电脑小百科</a>（抖音/B站/小红书）技术支持QQ：2591735711 软件精选 · All Rights Reserved
+    <footer class="text-center text-xs text-slate-500 py-8 leading-6">
+        <p>© 2026 @电脑小百科（抖音/B站）技术支持QQ：2591735711 软件精选 · All Rights Reserved</p>
+    </footer>
 </div>
 
 <script>
-//市面真实常见电源额定档位
-const powerLevels = [300,350,400,450,500,550,600,650,700,750,850,1000,1200,1300,1600];
+    const titleInput = document.getElementById('titleInput');
+    const contentInput = document.getElementById('contentInput');
+    const titleColor = document.getElementById('titleColor');
+    const textColor = document.getElementById('textColor');
+    const stepTextColor = document.getElementById('stepTextColor');
+    const stepBgColor = document.getElementById('stepBgColor');
+    const titleFontSize = document.getElementById('titleFontSize');
+    const contentFontSize = document.getElementById('contentFontSize');
+    const ratioSel = document.getElementById('ratioSel');
+    const styleSelect = document.getElementById('styleSelect');
+    const fontSelect = document.getElementById('fontSelect');
+    const captureArea = document.getElementById('captureArea');
+    const paperWrap = document.getElementById('paperWrap');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewContent = document.getElementById('previewContent');
+    const coilSide = document.getElementById('coilSide');
 
-//向上匹配真实电源档位
-function getNearestPower(w){
-    for(let p of powerLevels){
-        if(p >= w) return p;
+    // 每个模板的推荐字体与配色（切换模板时自动套用，之后仍可手动微调）
+    const THEMES = {
+        "style-coil":         {name:"线圈笔记本", font:"font-hand",  title:"#1e3a8a", text:"#111111", stepT:"#0b2447", stepB:"#ffec66"},
+        "style-simple":       {name:"简约横线本", font:"font-sans",  title:"#1f2937", text:"#374151", stepT:"#ffffff", stepB:"#3b82f6"},
+        "style-grid":         {name:"方格手账",   font:"font-hand",  title:"#e8590c", text:"#343a40", stepT:"#493003", stepB:"#ffe8cc"},
+        "style-error":        {name:"错题笔记本", font:"font-song",  title:"#c92a2a", text:"#212529", stepT:"#ffffff", stepB:"#e03131"},
+        "style-color-journal":{name:"彩边手账",   font:"font-round", title:"#0b7285", text:"#212529", stepT:"#ffffff", stepB:"#ff6b6b"},
+        "style-macaron":      {name:"马卡龙便签", font:"font-round", title:"#d6336c", text:"#495057", stepT:"#ffffff", stepB:"#f783ac"},
+        "style-vintage":      {name:"复古牛皮纸", font:"font-song",  title:"#7f4f24", text:"#432818", stepT:"#ffffff", stepB:"#a47148"},
+        "style-scholar":      {name:"学霸双色笔记", font:"font-sans", title:"#1864ab", text:"#212529", stepT:"#ffffff", stepB:"#4dabf7"},
+        "style-apple":        {name:"苹果备忘录", font:"font-sans",  title:"#1a1a1a", text:"#2b2b2b", stepT:"#5c4300", stepB:"#f5b932"},
+        "style-insta":        {name:"Instagram渐变卡", font:"font-round", title:"#c13584", text:"#262626", stepT:"#ffffff", stepB:"#e1306c"},
+        "style-byte":         {name:"字节范蓝色卡", font:"font-sans", title:"#1f2329", text:"#33383d", stepT:"#ffffff", stepB:"#3370ff"},
+        "style-ali":          {name:"阿里橙活力卡", font:"font-sans", title:"#1a1a1a", text:"#333333", stepT:"#ffffff", stepB:"#f97316"},
+        "style-business":     {name:"商务简报",   font:"font-sans",  title:"#16324f", text:"#2f3e4e", stepT:"#ffffff", stepB:"#1f4e79"},
+        "style-xhs":          {name:"紫色小红书", font:"font-round", title:"#8b5cf6", text:"#333333", stepT:"#8b5cf6", stepB:"#f3eefa", accent:"#8b5cf6"},
+        "style-pop":          {name:"波普艺术",   font:"font-round", title:"#111111", text:"#222222", stepT:"#ffd23f", stepB:"#111111"},
+        "style-deco":         {name:"艺术装饰",   font:"font-song",  title:"#d4af37", text:"#e8e0cf", stepT:"#0e2a23", stepB:"#d4af37"},
+        "style-glass":        {name:"玻璃拟态",   font:"font-round", title:"#4c1d95", text:"#312e81", stepT:"#ffffff", stepB:"#8b5cf6"},
+        "style-dreamy":       {name:"梦幻渐变",   font:"font-round", title:"#6d28d9", text:"#4c1d95", stepT:"#ffffff", stepB:"#a78bfa"},
+        "style-watercolor":   {name:"水彩艺术",   font:"font-song",  title:"#0b7285", text:"#37474f", stepT:"#ffffff", stepB:"#74c0fc"},
+        "style-jp":           {name:"日本杂志",   font:"font-song",  title:"#1a1a1a", text:"#333333", stepT:"#ffffff", stepB:"#cf1322"},
+        "style-chinese":      {name:"中国传统",   font:"font-song",  title:"#8c1f28", text:"#2b2b2b", stepT:"#fdf6e3", stepB:"#a52a2a"},
+        "style-warm":         {name:"温暖柔和",   font:"font-song",  title:"#a05a2c", text:"#6d4c41", stepT:"#ffffff", stepB:"#e8a87c"},
+        "style-gray":         {name:"简约高级灰", font:"font-sans",  title:"#27272a", text:"#52525b", stepT:"#fafafa", stepB:"#71717a"},
+        "style-mono":         {name:"极简黑白",   font:"font-sans",  title:"#000000", text:"#1f1f1f", stepT:"#ffffff", stepB:"#000000"},
+        "style-nature":       {name:"清新自然",   font:"font-hand",  title:"#2b8a3e", text:"#343a40", stepT:"#ffffff", stepB:"#40c057"},
+        "style-fairytale":    {name:"儿童童话",   font:"font-round", title:"#d6336c", text:"#5c4a72", stepT:"#ffffff", stepB:"#ffa8a8"},
+        "style-meadow":       {name:"青野晨光",   font:"font-hand",  title:"#2f6b4f", text:"#4a5240", stepT:"#ffffff", stepB:"#69db7c"},
+        "style-typewriter":   {name:"复古打字机", font:"font-song",  title:"#3e2c1c", text:"#4a3b2a", stepT:"#f7f3e8", stepB:"#8c7853"},
+        "style-dark":         {name:"暗黑科技",   font:"font-sans",  title:"#4dd0e1", text:"#c9d1d9", stepT:"#00252a", stepB:"#00e5ff"},
+        "style-cyber":        {name:"赛博朋克",   font:"font-sans",  title:"#ff2e97", text:"#d8d8ff", stepT:"#0a0a12", stepB:"#00f0ff"},
+    };
+
+    function esc(s){
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
-    return 1600;
-}
 
-// ========= CPU数据库：主板默认BIOS，长时间满载Package功耗（电源选型用） =========
-const cpuDatabase = [
-    // Intel 6代 Skylake LGA1151
-    {brand:"intel",name:"i3‑6100",w:60},
-    {brand:"intel",name:"i5‑6400",w:80},
-    {brand:"intel",name:"i5‑6500",w:82},
-    {brand:"intel",name:"i5‑6600K",w:125},
-    {brand:"intel",name:"i7‑6700",w:90},
-    {brand:"intel",name:"i7‑6700K",w:150},
-
-    // Intel 7代 Kaby Lake
-    {brand:"intel",name:"i3‑7100",w:60},
-    {brand:"intel",name:"i5‑7400",w:82},
-    {brand:"intel",name:"i5‑7500",w:84},
-    {brand:"intel",name:"i5‑7600K",w:130},
-    {brand:"intel",name:"i7‑7700",w:92},
-    {brand:"intel",name:"i7‑7700K",w:155},
-
-    // Intel 8代 Coffee Lake
-    {brand:"intel",name:"i3‑8100",w:65},
-    {brand:"intel",name:"i5‑8400",w:100},
-    {brand:"intel",name:"i5‑8500",w:102},
-    {brand:"intel",name:"i5‑8600K",w:140},
-    {brand:"intel",name:"i7‑8700",w:110},
-    {brand:"intel",name:"i7‑8700K",w:160},
-
-    // Intel 9代 Coffee Lake‑S Refresh
-    {brand:"intel",name:"i3‑9100F",w:65},
-    {brand:"intel",name:"i5‑9400F",w:105},
-    {brand:"intel",name:"i5‑9600K",w:145},
-    {brand:"intel",name:"i7‑9700K",w:175},
-    {brand:"intel",name:"i9‑9900K",w:205},
-
-    // Intel 10代
-    {brand:"intel",name:"i3‑10100",w:65},
-    {brand:"intel",name:"i3‑10100F",w:65},
-    {brand:"intel",name:"i5‑10400",w:88},
-    {brand:"intel",name:"i5‑10400F",w:88},
-    {brand:"intel",name:"i5‑10600K",w:130},
-    {brand:"intel",name:"i7‑10700K",w:150},
-    {brand:"intel",name:"i9‑10900K",w:190},
-
-    // Intel 11代
-    {brand:"intel",name:"i5‑11400",w:95},
-    {brand:"intel",name:"i5‑11400F",w:95},
-    {brand:"intel",name:"i5‑11600K",w:130},
-    {brand:"intel",name:"i7‑11700K",w:160},
-    {brand:"intel",name:"i9‑11900K",w:200},
-
-    // Intel 12代 Alder Lake
-    {brand:"intel",name:"i3‑12100",w:60},
-    {brand:"intel",name:"i3‑12100F",w:60},
-    {brand:"intel",name:"i5‑12400",w:110},
-    {brand:"intel",name:"i5‑12400F",w:110},
-    {brand:"intel",name:"i5‑12600K",w:160},
-    {brand:"intel",name:"i7‑12700K",w:200},
-    {brand:"intel",name:"i9‑12900K",w:230},
-
-    // Intel 13代 Raptor Lake
-    {brand:"intel",name:"i3‑13100",w:60},
-    {brand:"intel",name:"i3‑13100F",w:60},
-    {brand:"intel",name:"i5‑13400",w:120},
-    {brand:"intel",name:"i5‑13400F",w:120},
-    {brand:"intel",name:"i5‑13600K",w:170},
-    {brand:"intel",name:"i7‑13700K",w:210},
-    {brand:"intel",name:"i9‑13900K",w:250},
-
-    // Intel 14代 Raptor Lake‑S Refresh
-    {brand:"intel",name:"i5‑14400",w:120},
-    {brand:"intel",name:"i5‑14400F",w:120},
-    {brand:"intel",name:"i5‑14600K",w:170},
-    {brand:"intel",name:"i7‑14700K",w:220},
-    {brand:"intel",name:"i9‑14900K",w:260},
-
-    // Intel Ultra 200系列 Arrow Lake‑S
-    {brand:"intel",name:"Ultra5 225F",w:120},
-    {brand:"intel",name:"Ultra5 235",w:120},
-    {brand:"intel",name:"Ultra5 245K",w:140},
-    {brand:"intel",name:"Ultra7 265K",w:190},
-    {brand:"intel",name:"Ultra7 270K Plus",w:250},
-    {brand:"intel",name:"Ultra9 285K",w:240},
-
-    // AMD FX 老AM3+ 家用
-    {brand:"amd",name:"FX‑8300",w:140},
-    {brand:"amd",name:"FX‑8350",w:160},
-
-    // AMD Ryzen 1000 Zen1 AM4
-    {brand:"amd",name:"R3‑1200",w:80},
-    {brand:"amd",name:"R5‑1400",w:95},
-    {brand:"amd",name:"R5‑1500X",w:105},
-    {brand:"amd",name:"R5‑1600",w:110},
-    {brand:"amd",name:"R5‑1600X",w:125},
-    {brand:"amd",name:"R7‑1700",w:130},
-    {brand:"amd",name:"R7‑1700X",w:150},
-    {brand:"amd",name:"R7‑1800X",w:170},
-
-    // AMD Ryzen 2000 Zen+ AM4
-    {brand:"amd",name:"R3‑2200G",w:65},
-    {brand:"amd",name:"R5‑2400G",w:65},
-    {brand:"amd",name:"R5‑2600",w:115},
-    {brand:"amd",name:"R5‑2600X",w:130},
-    {brand:"amd",name:"R7‑2700",w:140},
-    {brand:"amd",name:"R7‑2700X",w:160},
-
-    // AMD Ryzen3000 AM4
-    {brand:"amd",name:"R5‑3500X",w:95},
-    {brand:"amd",name:"R5‑3600",w:100},
-    {brand:"amd",name:"R7‑3700X",w:110},
-    {brand:"amd",name:"R7‑3800X",w:130},
-    {brand:"amd",name:"R9‑3900X",w:150},
-    {brand:"amd",name:"R9‑3950X",w:175},
-
-    // AMD Ryzen4000G APU
-    {brand:"amd",name:"R3‑4300G",w:65},
-    {brand:"amd",name:"R5‑4600G",w:65},
-
-    // AMD Ryzen5000 AM4
-    {brand:"amd",name:"R5‑5500",w:65},
-    {brand:"amd",name:"R5‑5600",w:95},
-    {brand:"amd",name:"R5‑5600X",w:110},
-    {brand:"amd",name:"R7‑5700X",w:105},
-    {brand:"amd",name:"R7‑5800X",w:125},
-    {brand:"amd",name:"R7‑5800X3D",w:120},
-    {brand:"amd",name:"R9‑5900X",w:140},
-    {brand:"amd",name:"R9‑5950X",w:165},
-
-    // AMD Ryzen7000 AM5 Zen4
-    {brand:"amd",name:"R5‑7500F",w:100},
-    {brand:"amd",name:"R5‑7600",w:105},
-    {brand:"amd",name:"R5‑7600X3D",w:90},
-    {brand:"amd",name:"R7‑7700X",w:130},
-    {brand:"amd",name:"R7‑7800X3D",w:125},
-    {brand:"amd",name:"R9‑7900X",w:170},
-    {brand:"amd",name:"R9‑7900X3D",w:170},
-    {brand:"amd",name:"R9‑7950X",w:190},
-
-    // AMD Ryzen9000 AM5 Zen5
-    {brand:"amd",name:"R5‑9600X",w:105},
-    {brand:"amd",name:"R7‑9700X",w:130},
-    {brand:"amd",name:"R7‑9800X3D",w:130},
-    {brand:"amd",name:"R9‑9900X",w:170},
-    {brand:"amd",name:"R9‑9950X",w:190}
-];
-
-// ========= GPU数据库：NVIDIA/AMD官方TGP/TBP典型板载功耗 =========
-const gpuDatabase = [
-    {brand:"none",name:"核显 / 无独立显卡",w:0},
-
-    //N卡 GTX700系列 Maxwell开普勒
-    {brand:"nvidia",name:"GTX750",w:55},
-    {brand:"nvidia",name:"GTX750Ti",w:60},
-    {brand:"nvidia",name:"GTX760",w:170},
-    {brand:"nvidia",name:"GTX770",w:230},
-    {brand:"nvidia",name:"GTX780",w:250},
-    {brand:"nvidia",name:"GTX780Ti",w:280},
-
-    //N卡 GTX900系列 Maxwell
-    {brand:"nvidia",name:"GTX950",w:110},
-    {brand:"nvidia",name:"GTX960",w:120},
-    {brand:"nvidia",name:"GTX970",w:170},
-    {brand:"nvidia",name:"GTX980",w:190},
-    {brand:"nvidia",name:"GTX980Ti",w:250},
-
-    //N卡 GTX 10系列
-    {brand:"nvidia",name:"GT1030",w:30},
-    {brand:"nvidia",name:"GTX1050",w:75},
-    {brand:"nvidia",name:"GTX1050Ti",w:75},
-    {brand:"nvidia",name:"GTX1060 6G",w:120},
-    {brand:"nvidia",name:"GTX1070",w:150},
-    {brand:"nvidia",name:"GTX1080",w:180},
-    {brand:"nvidia",name:"GTX1080Ti",w:250},
-
-    //N卡 GTX16系列
-    {brand:"nvidia",name:"GTX1630",w:75},
-    {brand:"nvidia",name:"GTX1650",w:75},
-    {brand:"nvidia",name:"GTX1660",w:120},
-    {brand:"nvidia",name:"GTX1660 Super",w:125},
-    {brand:"nvidia",name:"GTX1660Ti",w:120},
-
-    //N卡 RTX20系列
-    {brand:"nvidia",name:"RTX2060",w:160},
-    {brand:"nvidia",name:"RTX2060 Super",w:175},
-    {brand:"nvidia",name:"RTX2070",w:215},
-    {brand:"nvidia",name:"RTX2070 Super",w:215},
-    {brand:"nvidia",name:"RTX2080",w:250},
-    {brand:"nvidia",name:"RTX2080 Super",w:250},
-    {brand:"nvidia",name:"RTX2080Ti",w:300},
-
-    //N卡 RTX30系列
-    {brand:"nvidia",name:"RTX3050",w:130},
-    {brand:"nvidia",name:"RTX3060",w:170},
-    {brand:"nvidia",name:"RTX3060Ti",w:200},
-    {brand:"nvidia",name:"RTX3070",w:220},
-    {brand:"nvidia",name:"RTX3070Ti",w:250},
-    {brand:"nvidia",name:"RTX3080",w:320},
-    {brand:"nvidia",name:"RTX3080Ti",w:370},
-    {brand:"nvidia",name:"RTX3090",w:450},
-    {brand:"nvidia",name:"RTX3090Ti",w:450},
-
-    //N卡 RTX40系列 Ada
-    {brand:"nvidia",name:"RTX4060",w:115},
-    {brand:"nvidia",name:"RTX4060Ti",w:165},
-    {brand:"nvidia",name:"RTX4070",w:200},
-    {brand:"nvidia",name:"RTX4070 Super",w:220},
-    {brand:"nvidia",name:"RTX4070Ti",w:285},
-    {brand:"nvidia",name:"RTX4070Ti Super",w:285},
-    {brand:"nvidia",name:"RTX4080",w:320},
-    {brand:"nvidia",name:"RTX4080 Super",w:320},
-    {brand:"nvidia",name:"RTX4090",w:450},
-    {brand:"nvidia",name:"RTX4090D",w:450},
-
-    //N卡 RTX50系列 Blackwell
-    {brand:"nvidia",name:"RTX5050",w:130},
-    {brand:"nvidia",name:"RTX5060",w:145},
-    {brand:"nvidia",name:"RTX5060Ti",w:180},
-    {brand:"nvidia",name:"RTX5070",w:250},
-    {brand:"nvidia",name:"RTX5070Ti",w:300},
-    {brand:"nvidia",name:"RTX5080",w:360},
-    {brand:"nvidia",name:"RTX5090",w:575},
-    {brand:"nvidia",name:"RTX5090D",w:575},
-
-    //A卡 RX400系列 GCN
-    {brand:"amd",name:"RX460",w:110},
-    {brand:"amd",name:"RX470",w:145},
-    {brand:"amd",name:"RX480",w:185},
-
-    //A卡 RX500系列 GCN
-    {brand:"amd",name:"RX560",w:120},
-    {brand:"amd",name:"RX570",w:150},
-    {brand:"amd",name:"RX580",w:185},
-    {brand:"amd",name:"RX590",w:220},
-
-    //A卡 RX5000 RDNA1
-    {brand:"amd",name:"RX5600XT",w:150},
-    {brand:"amd",name:"RX5700",w:180},
-    {brand:"amd",name:"RX5700XT",w:225},
-
-    //A卡 RX6000 RDNA2
-    {brand:"amd",name:"RX6500XT",w:107},
-    {brand:"amd",name:"RX6600",w:132},
-    {brand:"amd",name:"RX6650XT",w:180},
-    {brand:"amd",name:"RX6700XT",w:230},
-    {brand:"amd",name:"RX6800",w:263},
-    {brand:"amd",name:"RX6800XT",w:300},
-    {brand:"amd",name:"RX6900XT",w:355},
-
-    //A卡 RX7000 RDNA3
-    {brand:"amd",name:"RX7400",w:55},
-    {brand:"amd",name:"RX7600",w:165},
-    {brand:"amd",name:"RX7700XT",w:245},
-    {brand:"amd",name:"RX7800XT",w:263},
-    {brand:"amd",name:"RX7900GRE",w:315},
-    {brand:"amd",name:"RX7900XT",w:315},
-    {brand:"amd",name:"RX7900XTX",w:355},
-
-    //A卡 RX9000 RDNA4
-    {brand:"amd",name:"RX9060XT",w:220},
-    {brand:"amd",name:"RX9070",w:220},
-    {brand:"amd",name:"RX9070XT",w:304}
-];
-
-//dom
-const cpuBrandFilter = document.getElementById('cpuBrandFilter');
-const cpuSelect = document.getElementById('cpuSelect');
-const gpuBrandFilter = document.getElementById('gpuBrandFilter');
-const gpuSelect = document.getElementById('gpuSelect');
-
-const cpuManual = document.getElementById('cpuManual');
-const gpuManual = document.getElementById('gpuManual');
-const totalWEl = document.getElementById('totalW');
-const safeWEl = document.getElementById('safeW');
-const bestWEl = document.getElementById('bestW');
-
-//渲染CPU下拉
-function renderCpuSelect(){
-    const filterVal = cpuBrandFilter.value;
-    cpuSelect.innerHTML = "";
-    let list;
-    if(filterVal === 'all'){
-        list = cpuDatabase;
-    }else{
-        list = cpuDatabase.filter(item=>item.brand === filterVal);
+    function hexToRgba(hex, a){
+        const h = hex.replace('#','');
+        const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+        const r = parseInt(full.slice(0,2),16);
+        const g = parseInt(full.slice(2,4),16);
+        const b = parseInt(full.slice(4,6),16);
+        return `rgba(${r},${g},${b},${a})`;
     }
-    list.forEach(item=>{
-        const opt = document.createElement('option');
-        opt.value = item.w;
-        opt.textContent = `${item.name}（${item.w}W）`;
-        cpuSelect.appendChild(opt);
+
+    // 简易标记解析：# 大标题 / ## 小标题 / - 卡片列表 / > 重点框 / >> 总结区 / --- 分割线
+    function parseContent(rawText, accent){
+        accent = accent || stepBgColor.value;
+        const lines = rawText.split('\n');
+        let html = '';
+        for(let i = 0; i < lines.length; i++){
+            const t = lines[i].trim();
+            if(!t){ html += '<div style="height:0.55em"></div>'; continue; }
+            // 分割线 ---
+            if(/^(-{3,}|\*{3,})$/.test(t)){
+                html += `<div class="md-divider" style="color:${textColor.value};"><span>✦</span></div>`;
+                continue;
+            }
+            // 总结区 >>
+            if(/^>>/.test(t)){
+                const text = t.replace(/^>>\s*/, '');
+                if(text){
+                    html += `<div class="md-summary" style="border-color:${titleColor.value};background:${hexToRgba(stepBgColor.value,.15)};"><span class="md-summary-tag" style="background:${titleColor.value};">📝 总结</span>${esc(text)}</div>`;
+                }
+                continue;
+            }
+            // 重点框 >
+            if(/^>/.test(t)){
+                const text = t.replace(/^>\s*/, '');
+                if(text){
+                    html += `<div class="md-quote" style="border-left-color:${stepBgColor.value};background:${hexToRgba(stepBgColor.value,.14)};">${esc(text)}</div>`;
+                }
+                continue;
+            }
+            // 卡片列表（连续 - 行聚合，带圆形数字序号徽章）
+            if(/^-\s/.test(t) || t === '-'){
+                let items = '';
+                let no = 0;
+                while(i < lines.length){
+                    const lt = lines[i].trim();
+                    if(!(/^-\s/.test(lt) || lt === '-')) break;
+                    const text = lt.replace(/^-\s*/, '');
+                    if(text){
+                        no++;
+                        items += `<li><span class="md-num" style="background:${titleColor.value};">${no}</span>${esc(text)}</li>`;
+                    }
+                    i++;
+                }
+                i--;
+                html += `<ul class="md-cards">${items}</ul>`;
+                continue;
+            }
+            // # 大标题 / ## 小标题
+            const m = t.match(/^(#+)\s*(.+)$/);
+            if(m){
+                if(m[1].length === 1){
+                    html += `<p class="md-h1" style="color:${titleColor.value};">${esc(m[2])}</p><div class="md-h1-rule" style="background:linear-gradient(90deg,${accent} 0 44px,rgba(127,127,127,.25) 44px);"></div>`;
+                }else{
+                    html += `<p style="margin:8px 0 4px;"><span class="step-subtitle" style="background:${stepBgColor.value};color:${stepTextColor.value};">${esc(m[2])}</span></p>`;
+                }
+                continue;
+            }
+            // ① 编号 / ▫ 项目符号：悬挂缩进
+            if(/^[①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳▫•]/.test(t)){
+                html += `<p class="md-li" style="margin:2px 0;">${esc(t)}</p>`;
+                continue;
+            }
+            html += `<p style="margin:2px 0;">${esc(t)}</p>`;
+        }
+        return html;
+    }
+
+    // 切换模板时自动套用该模板的推荐字体与配色
+    function applyTheme(){
+        const t = THEMES[styleSelect.value];
+        if(!t) return;
+        fontSelect.value = t.font;
+        titleColor.value = t.title;
+        textColor.value = t.text;
+        stepTextColor.value = t.stepT;
+        stepBgColor.value = t.stepB;
+    }
+
+    function render(){
+        // 切换模板（relative 不可省略：水印层依赖它定位）
+        captureArea.className = "overflow-hidden rounded-lg shadow-lg relative " + styleSelect.value;
+
+        // 线圈侧边只在线圈模板显示
+        if(styleSelect.value === "style-coil"){
+            coilSide.classList.remove("hidden");
+        }else{
+            coilSide.classList.add("hidden");
+        }
+
+        // 应用字体
+        paperWrap.className = "note-paper " + fontSelect.value;
+
+        // 纸张比例
+        captureArea.style.aspectRatio = ratioSel.value;
+
+        // 标题样式（底部强调色短下划线，参考卡片通用设计）
+        const theme = THEMES[styleSelect.value] || {};
+        const accent = theme.accent || stepBgColor.value;
+        previewTitle.style.color = titleColor.value;
+        previewTitle.style.fontSize = titleFontSize.value + "px";
+        previewTitle.innerText = titleInput.value;
+        previewTitle.style.display = "inline-block";
+        previewTitle.style.paddingBottom = "4px";
+        previewTitle.style.borderBottom = "4px solid " + accent;
+
+        // 正文样式
+        previewContent.style.color = textColor.value;
+        previewContent.style.fontSize = contentFontSize.value + "px";
+        previewContent.innerHTML = parseContent(contentInput.value, accent);
+
+        // 同步模板库缩略图选中态
+        galItems.forEach(it => it.classList.toggle('active', it.classList.contains(styleSelect.value)));
+
+        // 水印
+        renderWatermark();
+    }
+
+    // 所有参数实时预览
+    [titleInput, contentInput, titleColor, textColor, stepTextColor, stepBgColor,
+     titleFontSize, contentFontSize, ratioSel, fontSelect].forEach(el => {
+        el.addEventListener('input', render);
     });
-    calcPower();
-}
 
-//渲染GPU下拉
-function renderGpuSelect(){
-    const filterVal = gpuBrandFilter.value;
-    gpuSelect.innerHTML = "";
-    let list;
-    if(filterVal === 'all'){
-        list = gpuDatabase;
-    }else if(filterVal === 'nvidia'){
-        list = gpuDatabase.filter(item=>item.brand === 'nvidia' || item.brand === 'none');
-    }else{
-        list = gpuDatabase.filter(item=>item.brand === 'amd' || item.brand === 'none');
+    // 切换模板：自动套用推荐配色后刷新
+    styleSelect.addEventListener('change', () => { applyTheme(); render(); });
+
+    // 光标处插入文本
+    function insertAtCursor(text){
+        const el = contentInput;
+        const start = el.selectionStart ?? el.value.length;
+        const end = el.selectionEnd ?? start;
+        el.value = el.value.slice(0, start) + text + el.value.slice(end);
+        el.selectionStart = el.selectionEnd = start + text.length;
+        el.focus();
+        render();
     }
-    list.forEach(item=>{
-        const opt = document.createElement('option');
-        opt.value = item.w;
-        opt.textContent = `${item.name}（${item.w}W）`;
-        gpuSelect.appendChild(opt);
+    document.querySelectorAll('[data-insert]').forEach(btn => {
+        btn.addEventListener('click', () => insertAtCursor(btn.dataset.insert));
     });
-    calcPower();
-}
+    document.querySelectorAll('[data-insert-block]').forEach(btn => {
+        btn.addEventListener('click', () => insertAtCursor('\n' + btn.dataset.insertBlock + '\n'));
+    });
 
-//计算函数
-function calcPower(){
-    let cpuW = Number(cpuSelect.value);
-    let gpuW = Number(gpuSelect.value);
+    // ========== 水印功能 ==========
+    const wmEnabled = document.getElementById('wmEnabled');
+    const wmTypeSel = document.getElementById('wmType');
+    const wmText = document.getElementById('wmText');
+    const wmImage = document.getElementById('wmImage');
+    const wmPosSel = document.getElementById('wmPos');
+    const wmLayerSel = document.getElementById('wmLayerSel');
+    const wmOpacity = document.getElementById('wmOpacity');
+    const wmOpacityVal = document.getElementById('wmOpacityVal');
+    const wmSize = document.getElementById('wmSize');
+    const wmLayerEl = document.getElementById('wmLayer');
+    let wmImageURL = null;
 
-    if(cpuManual.value !== '' && !isNaN(Number(cpuManual.value))){
-        cpuW = Number(cpuManual.value);
+    function renderWatermark(){
+        const on = wmEnabled.checked;
+        wmLayerEl.classList.toggle('hidden', !on);
+        if(!on) return;
+
+        wmLayerEl.innerHTML = '';
+        wmLayerEl.style.zIndex = (wmLayerSel.value === 'front') ? '5' : '1';
+        wmLayerEl.style.fontFamily = getComputedStyle(paperWrap).fontFamily;
+
+        const opacity = wmOpacity.value / 100;
+        const size = parseInt(wmSize.value, 10);
+        const w = captureArea.clientWidth;
+        const h = captureArea.clientHeight;
+        const isImg = wmTypeSel.value === 'image';
+
+        // 生成单个水印元素
+        const makeItem = () => {
+            if(isImg){
+                if(!wmImageURL) return null;
+                const img = document.createElement('img');
+                img.src = wmImageURL;
+                img.style.width = (size * 4) + 'px';
+                return img;
+            }
+            const span = document.createElement('span');
+            span.textContent = wmText.value || '水印';
+            span.style.color = `rgba(100,100,100,${opacity})`;
+            span.style.fontSize = size + 'px';
+            span.style.fontWeight = '700';
+            span.style.whiteSpace = 'nowrap';
+            return span;
+        };
+
+        // 放置一个水印元素
+        const place = (el, style) => {
+            el.style.position = 'absolute';
+            Object.assign(el.style, style);
+            if(isImg) el.style.opacity = opacity;
+            wmLayerEl.appendChild(el);
+        };
+
+        if(wmPosSel.value === 'tile'){
+            // 平铺：错行网格 + 旋转
+            const stepX = Math.max(size * 7, 60);
+            const stepY = Math.max(size * 3.4, 40);
+            let row = 0;
+            for(let y = -stepY; y < h + stepY; y += stepY, row++){
+                for(let x = -stepX; x < w + stepX; x += stepX){
+                    const el = makeItem();
+                    if(!el) return;
+                    place(el, {
+                        left:(x + (row % 2 ? stepX / 2 : 0)) + 'px',
+                        top:y + 'px',
+                        transform:'rotate(-24deg)'
+                    });
+                }
+            }
+        }else if(wmPosSel.value === 'center'){
+            const el = makeItem();
+            if(!el) return;
+            place(el, {left:'50%', top:'50%', transform:'translate(-50%,-50%) rotate(-18deg)'});
+        }else{
+            const el = makeItem();
+            if(!el) return;
+            place(el, {right:'20px', bottom:'20px', transform:'rotate(-12deg)'});
+        }
     }
-    if(gpuManual.value !== '' && !isNaN(Number(gpuManual.value))){
-        gpuW = Number(gpuManual.value);
+
+    wmEnabled.addEventListener('change', renderWatermark);
+    wmTypeSel.addEventListener('change', () => {
+        wmText.classList.toggle('hidden', wmTypeSel.value !== 'text');
+        wmImage.classList.toggle('hidden', wmTypeSel.value !== 'image');
+        renderWatermark();
+    });
+    wmText.addEventListener('input', renderWatermark);
+    wmPosSel.addEventListener('change', renderWatermark);
+    wmLayerSel.addEventListener('change', renderWatermark);
+    wmOpacity.addEventListener('input', () => { wmOpacityVal.textContent = wmOpacity.value; renderWatermark(); });
+    wmSize.addEventListener('input', renderWatermark);
+    wmImage.addEventListener('change', () => {
+        const file = wmImage.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            wmImageURL = e.target.result;
+            wmEnabled.checked = true;
+            renderWatermark();
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // ========== 预览区直接编辑 ==========
+    const editInline = document.getElementById('editInline');
+
+    // 预览 DOM → 还原为标记文本（同步回左侧正文输入框）
+    function htmlToMarkdown(root){
+        const lines = [];
+        root.childNodes.forEach(node => {
+            if(node.nodeType === Node.TEXT_NODE){
+                const t = node.textContent.trim();
+                if(t) lines.push(t);
+                return;
+            }
+            if(node.nodeType !== Node.ELEMENT_NODE) return;
+            const tag = node.tagName;
+            const cls = node.classList;
+            if(tag === 'DIV' && cls.contains('md-divider')){ lines.push('---'); return; }
+            if(tag === 'DIV' && cls.contains('md-summary')){
+                lines.push('>> ' + node.textContent.replace('📝 总结','').trim());
+                return;
+            }
+            if(tag === 'DIV' && cls.contains('md-quote')){ lines.push('> ' + node.textContent.trim()); return; }
+            if(tag === 'UL' && cls.contains('md-cards')){
+                node.querySelectorAll('li').forEach(li => {
+                    const clone = li.cloneNode(true);
+                    const num = clone.querySelector('.md-num');
+                    if(num) num.remove();
+                    lines.push('- ' + clone.textContent.trim());
+                });
+                return;
+            }
+            if(tag === 'P'){
+                if(cls.contains('md-h1')){ lines.push('# ' + node.textContent.trim()); return; }
+                const chip = node.querySelector('.step-subtitle');
+                if(chip){
+                    const rest = node.textContent.replace(chip.textContent,'').trim();
+                    lines.push('## ' + chip.textContent.trim() + (rest ? ' ' + rest : ''));
+                    return;
+                }
+                const t = node.textContent.trim();
+                if(t) lines.push(t);
+                return;
+            }
+            const t = node.textContent.trim();
+            lines.push(t); // 空行占位 div → 空字符串
+        });
+        return lines.join('\n');
     }
 
-    const otherW = 80;
-    const totalLoad = cpuW + gpuW + otherW;
-
-    let safeRaw = totalLoad * 1.5;
-    let bestRaw = totalLoad * 2.0;
-
-    let safe = getNearestPower(safeRaw);
-    let best = getNearestPower(bestRaw);
-
-    //最低300W
-    if(safe < 300) safe = 300;
-    if(best < 300) best = 300;
-
-    //超高功耗显卡兜底
-    if(gpuW >= 500){
-        safe = 1000;
-        best = 1200;
+    function setInlineEdit(on){
+        previewTitle.contentEditable = on ? 'true' : 'false';
+        previewContent.contentEditable = on ? 'true' : 'false';
+        previewTitle.classList.toggle('inline-editing', on);
+        previewContent.classList.toggle('inline-editing', on);
+        if(!on) render(); // 退出编辑时按源内容重新规范化
     }
 
-    totalWEl.innerText = totalLoad;
-    safeWEl.innerText = safe;
-    bestWEl.innerText = best;
-}
+    previewContent.addEventListener('input', () => {
+        if(!editInline.checked) return;
+        contentInput.value = htmlToMarkdown(previewContent);
+    });
+    previewTitle.addEventListener('input', () => {
+        if(!editInline.checked) return;
+        titleInput.value = previewTitle.innerText.replace(/\n/g,' ').trim();
+    });
+    // 粘贴一律转纯文本，避免外部样式破坏排版
+    [previewTitle, previewContent].forEach(el => el.addEventListener('paste', e => {
+        if(!editInline.checked) return;
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+        document.execCommand('insertText', false, text);
+    }));
+    editInline.addEventListener('change', () => setInlineEdit(editInline.checked));
 
-//绑定事件
-cpuBrandFilter.addEventListener('change',renderCpuSelect);
-gpuBrandFilter.addEventListener('change',renderGpuSelect);
-cpuSelect.addEventListener('change',calcPower);
-gpuSelect.addEventListener('change',calcPower);
-cpuManual.addEventListener('input',calcPower);
-gpuManual.addEventListener('input',calcPower);
+    // 随机换模板
+    document.getElementById('randomBtn').addEventListener('click', () => {
+        const keys = Object.keys(THEMES).filter(k => k !== styleSelect.value);
+        styleSelect.value = keys[Math.floor(Math.random() * keys.length)];
+        applyTheme();
+        render();
+    });
 
-//初始化渲染
-renderCpuSelect();
-renderGpuSelect();
-calcPower();
+    document.getElementById('downloadBtn').addEventListener('click', async () => {
+        const canvas = await html2canvas(captureArea, {
+            scale: 2,
+            backgroundColor: null,
+            useCORS: true
+        });
+        const link = document.createElement("a");
+        link.download = THEMES[styleSelect.value].name + ".png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    });
+
+    // 生成模板风格库缩略图
+    const galleryGrid = document.getElementById('galleryGrid');
+    const galItems = [];
+    Object.entries(THEMES).forEach(([key, t]) => {
+        const item = document.createElement('div');
+        item.className = 'gal-item ' + key;
+        item.title = t.name;
+        item.innerHTML = `<div class="note-paper ${t.font}">
+                <div class="mini-title" style="color:${t.title}">${t.name}</div>
+                <div class="mini-body" style="color:${t.text}">
+                    <span class="step-subtitle" style="background:${t.stepB};color:${t.stepT};">小标题</span>
+                    <p style="margin:3px 0 0;">这里是正文示例文字，展示排版效果。</p>
+                </div>
+            </div>`;
+        item.addEventListener('click', () => {
+            styleSelect.value = key;
+            applyTheme();
+            render();
+            document.getElementById('editor').scrollIntoView({behavior:'smooth'});
+        });
+        galleryGrid.appendChild(item);
+        galItems.push(item);
+    });
+
+    // 导航滚动高亮
+    const navLinks = [...document.querySelectorAll('.nav-link')];
+    window.addEventListener('scroll', () => {
+        const y = window.scrollY + 90;
+        let current = 'editor';
+        navLinks.forEach(a => {
+            const sec = document.querySelector(a.getAttribute('href'));
+            if(sec && sec.offsetTop <= y) current = a.getAttribute('href').slice(1);
+        });
+        navLinks.forEach(a => a.classList.toggle('nav-active', a.getAttribute('href') === '#' + current));
+    });
+
+    // ========== 防盗版保护 ==========
+    // 可编辑元素放行（输入框 / 下拉 / 预览区直接编辑）
+    function isEditableEl(el){
+        if(!el) return false;
+        const tag = el.tagName;
+        return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
+    }
+
+    // 禁用右键菜单（可编辑区域除外，保证正常粘贴）
+    document.addEventListener('contextmenu', e => {
+        if(!isEditableEl(e.target)) e.preventDefault();
+    });
+
+    // 禁止拖拽内容出页面（文字 / 图片）
+    document.addEventListener('dragstart', e => e.preventDefault());
+    document.addEventListener('drop', e => e.preventDefault());
+
+    // 屏蔽保存 / 查看源码 / 打印 / 开发者工具快捷键
+    document.addEventListener('keydown', e => {
+        const k = (e.key || '').toLowerCase();
+        if((e.ctrlKey || e.metaKey) && ['s','u','p'].includes(k)){
+            e.preventDefault();
+            return;
+        }
+        if(e.key === 'F12' || ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i','j','c'].includes(k))){
+            e.preventDefault();
+        }
+    });
+
+    // 控制台版权提示
+    try{
+        console.log('%c© 2026 @电脑小百科（抖音/B站） 软件精选','color:#2563eb;font-size:14px;font-weight:bold;');
+        console.warn('本站内容受版权保护，未经授权禁止复制、保存、镜像或二次分发。');
+    }catch(err){}
+
+    render();
 </script>
-
 </body>
 </html>
