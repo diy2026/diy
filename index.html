@@ -172,6 +172,14 @@
   /* ===== 文字样式预设：下拉框旁的色点预览（主色+描边圆环） ===== */
   .style-preset-dot{ width:14px; height:14px; border-radius:50%; flex:none; box-shadow:inset 0 0 0 1px rgba(0,0,0,.12); }
 
+  /* ===== 背景类型切换按钮与预设色板 ===== */
+  .bg-mode-btn{ height:28px; border:1px solid #e5e7eb; border-radius:6px; font-size:11px; color:#4b5563; background:#fff; transition:all .15s ease; }
+  .bg-mode-btn:hover{ border-color:#4080ff; color:#4080ff; }
+  .bg-mode-btn.active{ background:#4080ff; border-color:#4080ff; color:#fff; }
+  .bg-swatch{ aspect-ratio:1/1; border-radius:6px; border:1px solid rgba(0,0,0,.12); cursor:pointer; transition:transform .12s ease, box-shadow .12s ease; }
+  .bg-swatch:hover{ transform:scale(1.12); }
+  .bg-swatch.active{ box-shadow:0 0 0 2px #4080ff; }
+
   /* ===== 画布下方紧凑功能条：位置 / 滤镜 / 操作 ===== */
   .pos-btn{ height:24px; min-width:34px; padding:0 5px; font-size:10px; border:1px solid #e5e7eb; border-radius:5px; background:#fff; color:#4b5563; transition:all .15s ease; white-space:nowrap; }
   .pos-btn:hover{ background:#eff6ff; border-color:#4080ff; color:#4080ff; }
@@ -261,17 +269,50 @@
                                w-full lg:w-[270px] lg:h-full scroll-panel">
     <div class="p-4 w-[270px] max-w-full">
       <h2 class="font-semibold text-gray-800 border-b border-gray-100 pb-2 mb-4 flex items-center gap-2">
-        <i class="fa fa-picture-o text-primary"></i>模板库（后端配置）
+        <i class="fa fa-picture-o text-primary"></i>背景与模板
       </h2>
-      <div class="mb-4">
-        <label class="block text-xs text-gray-500 mb-1.5">上传背景图</label>
-        <input id="customBgInput" type="file" accept="image/*" class="w-full text-xs text-gray-500"/>
+      <!-- 背景类型：纯色 / 渐变 / 图片 三选一 -->
+      <label class="block text-xs text-gray-500 mb-1.5">背景类型</label>
+      <div class="grid grid-cols-3 gap-1.5 mb-3">
+        <button data-bg-mode="color" class="bg-mode-btn">纯色</button>
+        <button data-bg-mode="gradient" class="bg-mode-btn">渐变</button>
+        <button data-bg-mode="image" class="bg-mode-btn active">图片</button>
       </div>
-      <div class="mb-3 flex items-center justify-between">
-        <label class="text-sm text-gray-600">图片背景模板</label>
+      <!-- 纯色背景：自定义取色 + 预设色板 -->
+      <div id="bgColorPanel" class="hidden mb-3">
+        <div class="flex items-center gap-2 mb-2">
+          <input id="bgSolidColor" type="color" value="#0f172a" class="tswatch"/>
+          <span class="text-xs text-gray-500">自定义颜色</span>
+        </div>
+        <div id="solidPresetList" class="grid grid-cols-6 gap-1.5"></div>
+      </div>
+      <!-- 渐变背景：双色 + 方向 + 预设 -->
+      <div id="bgGradientPanel" class="hidden mb-3">
+        <div class="flex items-center gap-1.5 mb-2">
+          <input id="bgGradColor1" type="color" value="#667eea" class="tswatch" title="起始色"/>
+          <i class="fa fa-long-arrow-right text-gray-300"></i>
+          <input id="bgGradColor2" type="color" value="#764ba2" class="tswatch" title="结束色"/>
+          <select id="bgGradAngle" class="tinput flex-1 min-w-0" title="渐变方向">
+            <option value="135">↘ 斜向</option>
+            <option value="90">→ 横向</option>
+            <option value="180">↓ 纵向</option>
+            <option value="45">↗ 斜向</option>
+          </select>
+        </div>
+        <div id="gradientPresetList" class="grid grid-cols-4 gap-1.5"></div>
+      </div>
+      <!-- 图片背景：上传 + 模板库 -->
+      <div id="bgImagePanel">
+        <div class="mb-3">
+          <label class="block text-xs text-gray-500 mb-1.5">上传背景图</label>
+          <input id="customBgInput" type="file" accept="image/*" class="w-full text-xs text-gray-500"/>
+        </div>
+        <label class="text-sm text-gray-600 block mb-2">图片背景模板</label>
+        <div id="templateList" class="grid grid-cols-2 gap-2 mb-3"></div>
+      </div>
+      <div class="mb-5 flex items-center justify-end">
         <button id="filterToggle" class="text-xs px-2 py-1 rounded border border-gray-200 text-primary hover:bg-blue-50 transition">滤镜：开</button>
       </div>
-      <div id="templateList" class="grid grid-cols-2 gap-2 mb-5"></div>
 
       <!-- 贴纸库：默认收起，点击标题展开/收起，避免占用过多高度 -->
       <button id="stickerToggle" class="w-full mt-5 pt-4 border-t border-gray-100 mb-3 flex items-center justify-between text-left group">
@@ -556,6 +597,8 @@
       <div id="stageWrap" class="bg-white rounded-xl shadow p-4 sm:p-6">
         <div id="stageScaler" class="relative">
           <div id="coverStage" class="cover-stage">
+            <!-- 纯色/渐变背景层：与背景图互斥显示，滤镜同样作用，导出所见即所得 -->
+            <div id="bgColorLayer" class="absolute inset-0 hidden"></div>
             <img id="bgImage" class="absolute inset-0 w-full h-full object-cover" crossorigin="anonymous" alt="bg"/>
             <div id="filterLayer" class="filter-layer hidden"></div>
             <!-- 装饰下层：位于文字下方（仅背景条/遮罩条可切换到此层） -->
@@ -604,6 +647,46 @@ const demoTemplateImgs = [
   'images/t6.jpg',
   'images/t7.jpg',
   'images/t8.jpg'
+];
+// 纯色背景预设：按色系分组，深色系更衬白字亮色标题
+const solidBgPresetGroups = [
+  { name:'深色系', items:[
+    { name:'墨黑',   c:'#111111' }, { name:'午夜',   c:'#020617' }, { name:'深夜蓝', c:'#0f172a' }, { name:'藏青',   c:'#1e1b4b' },
+    { name:'科技蓝', c:'#1e3a8a' }, { name:'深空灰', c:'#1f2937' }, { name:'墨绿',   c:'#14532d' }, { name:'森绿',   c:'#065f46' },
+    { name:'深紫',   c:'#5b21b6' }, { name:'酒红',   c:'#7f1d1d' }, { name:'暗红',   c:'#881337' }, { name:'深咖',   c:'#451a03' }
+  ]},
+  { name:'亮色系', items:[
+    { name:'宝蓝',   c:'#2563eb' }, { name:'天蓝',   c:'#38bdf8' }, { name:'青碧',   c:'#06b6d4' }, { name:'薄荷',   c:'#34d399' },
+    { name:'草绿',   c:'#22c55e' }, { name:'柠檬黄', c:'#facc15' }, { name:'杏橙',   c:'#fdba74' }, { name:'落日橙', c:'#ea580c' },
+    { name:'中国红', c:'#dc2626' }, { name:'樱花粉', c:'#ec4899' }, { name:'珊瑚',   c:'#fb7185' }, { name:'葡萄紫', c:'#7c3aed' }
+  ]},
+  { name:'中性色', items:[
+    { name:'雅灰',   c:'#6b7280' }, { name:'石板',   c:'#475569' }, { name:'银灰',   c:'#cbd5e1' }, { name:'浅灰白', c:'#f1f5f9' },
+    { name:'米白',   c:'#fafaf9' }, { name:'纯白',   c:'#ffffff' }
+  ]}
+];
+// 渐变背景预设：双色渐变，方向可在面板中调整（默认↘135°）
+const gradientBgPresetGroups = [
+  { name:'流行撞色', items:[
+    { name:'蓝紫', c1:'#667eea', c2:'#764ba2' }, { name:'熔金',   c1:'#f7971e', c2:'#ffd200' },
+    { name:'火焰', c1:'#ff512f', c2:'#dd2476' }, { name:'极光',   c1:'#43e97b', c2:'#38f9d7' },
+    { name:'海蓝', c1:'#2193b0', c2:'#6dd5ed' }, { name:'蜜桃',   c1:'#ffd3a5', c2:'#fd6585' },
+    { name:'电光紫', c1:'#8b5cf6', c2:'#d946ef' }, { name:'日落橙', c1:'#f97316', c2:'#db2777' },
+    { name:'蓝青', c1:'#0ea5e9', c2:'#22d3ee' }, { name:'酒红玫', c1:'#9f1239', c2:'#e11d48' }
+  ]},
+  { name:'高级深色', items:[
+    { name:'星空', c1:'#0f2027', c2:'#2c5364' }, { name:'深空',   c1:'#000428', c2:'#004e92' },
+    { name:'暗夜', c1:'#232526', c2:'#414345' }, { name:'午夜蓝', c1:'#0f172a', c2:'#334155' },
+    { name:'墨松', c1:'#0f766e', c2:'#164e63' }, { name:'深海',   c1:'#1e3a8a', c2:'#0e7490' },
+    { name:'幽紫', c1:'#1e1b4b', c2:'#5b21b6' }, { name:'咖啡',   c1:'#451a03', c2:'#92400e' },
+    { name:'石墨', c1:'#111827', c2:'#4b5563' }, { name:'靛夜',   c1:'#312e81', c2:'#6d28d9' }
+  ]},
+  { name:'清新浅色', items:[
+    { name:'甜橙',   c1:'#f6d365', c2:'#fda085' }, { name:'暖沙', c1:'#ffecd2', c2:'#fcb69f' },
+    { name:'冰蓝',   c1:'#e0f2fe', c2:'#7dd3fc' }, { name:'薰衣草', c1:'#e0c3fc', c2:'#8ec5fc' },
+    { name:'奶油白', c1:'#fdfbfb', c2:'#ebedee' }, { name:'薄荷粉', c1:'#a8edea', c2:'#fed6e3' },
+    { name:'晨光',   c1:'#fff1eb', c2:'#ace0f9' }, { name:'樱花', c1:'#fbc2eb', c2:'#a6c1ee' }
+  ]}
 ];
 // 贴纸库：按用途分组，覆盖封面/海报常用场景
 const stickerGroups = [
@@ -666,6 +749,9 @@ const textStylePresets = [
 const state = {
   size: '16:9',
   bgImage: demoTemplateImgs[0],
+  bgMode: 'image',                                        // image / color / gradient
+  bgColor: '#0f172a',
+  bgGradient: { c1: '#667eea', c2: '#764ba2', angle: 135 },
   mainTitle: '视频标题',
   subTitle: '副标题或简介',
   mainFontFamily: 'font-cover-bold',
@@ -784,7 +870,9 @@ function renderTemplates() {
     card.innerHTML = `<img src="${imgSrc}" class="w-full h-20 object-cover" alt="${t.name}"/><div class="text-xs text-center py-1.5 text-gray-700">${t.name}</div>`;
     card.onclick = () => {
       state.bgImage = imgSrc;
+      state.bgMode = 'image'; // 选模板即切回图片背景
       document.getElementById('bgImage').src = state.bgImage;
+      syncBgModeUI(); applyBackground();
       document.querySelectorAll('.template-card').forEach(c => {
         c.classList.remove('active');
         c.classList.replace('border-primary', 'border-gray-200');
@@ -1374,11 +1462,93 @@ document.getElementById('coverStage').addEventListener('pointerdown', e => {
   }
 });
 
+// ===================== 背景模式：纯色 / 渐变 / 图片 =====================
+// 应用当前背景到底层：图片模式显示bgImage，纯色/渐变显示bgColorLayer
+function applyBackground(){
+  const layer = document.getElementById('bgColorLayer');
+  const img = document.getElementById('bgImage');
+  if (state.bgMode === 'color') {
+    layer.style.background = state.bgColor;
+    layer.classList.remove('hidden');
+    img.classList.add('hidden');
+  } else if (state.bgMode === 'gradient') {
+    const g = state.bgGradient;
+    layer.style.background = `linear-gradient(${g.angle}deg, ${g.c1}, ${g.c2})`;
+    layer.classList.remove('hidden');
+    img.classList.add('hidden');
+  } else {
+    layer.classList.add('hidden');
+    img.classList.remove('hidden');
+  }
+  applyFilter(); // 滤镜对纯色/渐变底同样生效，导出所见即所得
+}
+
+// 三模式按钮与对应面板显隐同步
+function syncBgModeUI(){
+  document.querySelectorAll('[data-bg-mode]').forEach(b => {
+    b.classList.toggle('active', b.dataset.bgMode === state.bgMode);
+  });
+  document.getElementById('bgColorPanel').classList.toggle('hidden', state.bgMode !== 'color');
+  document.getElementById('bgGradientPanel').classList.toggle('hidden', state.bgMode !== 'gradient');
+  document.getElementById('bgImagePanel').classList.toggle('hidden', state.bgMode !== 'image');
+}
+
+// 渲染纯色/渐变预设色板：按色系分组展示，点击即切换背景类型并应用
+function renderBgPresets(){
+  const solidList = document.getElementById('solidPresetList');
+  solidList.innerHTML = '';
+  solidBgPresetGroups.forEach(group => {
+    const title = document.createElement('div');
+    title.className = 'col-span-6 pt-1 text-[10px] font-medium text-gray-400';
+    title.textContent = group.name;
+    solidList.appendChild(title);
+    group.items.forEach(p => {
+      const el = document.createElement('div');
+      el.className = 'bg-swatch';
+      el.style.background = p.c;
+      el.title = p.name;
+      el.onclick = () => {
+        state.bgMode = 'color';
+        state.bgColor = p.c;
+        document.getElementById('bgSolidColor').value = p.c;
+        syncBgModeUI();
+        applyBackground();
+      };
+      solidList.appendChild(el);
+    });
+  });
+  const gradList = document.getElementById('gradientPresetList');
+  gradList.innerHTML = '';
+  gradientBgPresetGroups.forEach(group => {
+    const title = document.createElement('div');
+    title.className = 'col-span-4 pt-1 text-[10px] font-medium text-gray-400';
+    title.textContent = group.name;
+    gradList.appendChild(title);
+    group.items.forEach(p => {
+      const el = document.createElement('div');
+      el.className = 'bg-swatch';
+      el.style.background = `linear-gradient(135deg, ${p.c1}, ${p.c2})`;
+      el.title = p.name;
+      el.onclick = () => {
+        state.bgMode = 'gradient';
+        state.bgGradient = { c1: p.c1, c2: p.c2, angle: state.bgGradient.angle };
+        document.getElementById('bgGradColor1').value = p.c1;
+        document.getElementById('bgGradColor2').value = p.c2;
+        syncBgModeUI();
+        applyBackground();
+      };
+      gradList.appendChild(el);
+    });
+  });
+}
+
 function applyFilter() {
   const img = document.getElementById('bgImage');
   const layer = document.getElementById('filterLayer');
+  const bgLayer = document.getElementById('bgColorLayer'); // 纯色/渐变底层同样吃滤镜
   let filter = `brightness(${state.brightness}%) contrast(${state.contrast}%) saturate(${state.saturate}%) blur(${state.blur}px)`;
   img.style.filter = filter;
+  if (bgLayer) bgLayer.style.filter = filter;
   if (state.filterEnabled && state.filterPreset !== 'none') {
     layer.classList.remove('hidden');
     const presets = {
@@ -1390,6 +1560,7 @@ function applyFilter() {
     };
     if (state.filterPreset === 'bw') {
       img.style.filter += ' grayscale(100%)';
+      if (bgLayer) bgLayer.style.filter += ' grayscale(100%)';
       layer.classList.add('hidden');
     } else {
       layer.style.background = presets[state.filterPreset] || '';
@@ -1449,13 +1620,25 @@ function bindEvents() {
     state.size = e.target.value;
     applySize();
   });
+  // 背景类型切换与参数调整
+  document.querySelectorAll('[data-bg-mode]').forEach(btn => btn.addEventListener('click', () => {
+    state.bgMode = btn.dataset.bgMode;
+    syncBgModeUI();
+    applyBackground();
+  }));
+  document.getElementById('bgSolidColor').addEventListener('input', e => { state.bgColor = e.target.value; applyBackground(); });
+  document.getElementById('bgGradColor1').addEventListener('input', e => { state.bgGradient.c1 = e.target.value; applyBackground(); });
+  document.getElementById('bgGradColor2').addEventListener('input', e => { state.bgGradient.c2 = e.target.value; applyBackground(); });
+  document.getElementById('bgGradAngle').addEventListener('change', e => { state.bgGradient.angle = +e.target.value; applyBackground(); });
   document.getElementById('customBgInput').addEventListener('change', e => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = ev => {
       state.bgImage = ev.target.result;
+      state.bgMode = 'image'; // 上传即切回图片背景
       document.getElementById('bgImage').src = ev.target.result;
+      syncBgModeUI(); applyBackground();
       document.querySelectorAll('.template-card').forEach(c => {
         c.classList.remove('active');
         c.classList.replace('border-primary', 'border-gray-200');
@@ -1514,6 +1697,8 @@ function bindEvents() {
     state.mainAlign = 'middle'; state.subAlign = 'middle';
     state.brightness = 100; state.contrast = 100; state.saturate = 100; state.blur = 0;
     state.filterPreset = 'none'; state.stickerList = []; state.decorList=[];
+    state.bgMode = 'image'; state.bgColor = '#0f172a';
+    state.bgGradient = { c1:'#667eea', c2:'#764ba2', angle:135 };
     state.mainPos = { xPct: 50, yPct: 40 }; state.subPos = { xPct: 50, yPct: 62 };
     state.hasThird = false; state.thirdTitle = ''; state.thirdSize = 30; state.thirdColor = '#ffffff';
     state.thirdAlign = 'middle'; state.thirdPos = { xPct: 50, yPct: 74 };
@@ -1549,8 +1734,14 @@ function bindEvents() {
     const presetDot = document.getElementById('presetDot');
     presetDot.style.background = '#ffffff';
     presetDot.style.border = '2px solid #000000';
+    // 背景恢复图片模式并同步面板控件
+    document.getElementById('bgSolidColor').value = state.bgColor;
+    document.getElementById('bgGradColor1').value = state.bgGradient.c1;
+    document.getElementById('bgGradColor2').value = state.bgGradient.c2;
+    document.getElementById('bgGradAngle').value = state.bgGradient.angle;
+    syncBgModeUI();
     syncThirdUI();
-    renderSvgText(); renderDragItems(); applyFilter();
+    renderSvgText(); renderDragItems(); applyBackground();
   });
   document.getElementById('exportBtn').addEventListener('click', async () => {
     const stage  = document.getElementById('coverStage');
@@ -1584,7 +1775,7 @@ function bindEvents() {
 }
 
 function init() {
-  applySize(); renderTemplates(); renderStickers(); renderDecorPanel(); renderTextStylePresets(); renderSvgText(); renderDragItems(); applyFilter(); syncFilterToggle(); syncThirdUI(); bindEvents();
+  applySize(); renderTemplates(); renderStickers(); renderDecorPanel(); renderTextStylePresets(); renderBgPresets(); renderSvgText(); renderDragItems(); applyBackground(); syncFilterToggle(); syncThirdUI(); bindEvents();
   // 小屏默认收起素材栏，画布优先；大屏保持展开
   if (window.innerWidth < 1024) setPanelCollapsed(true);
   // 字体加载完成后文字实际宽度会变，重算文字命中框
