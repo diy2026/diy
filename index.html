@@ -80,6 +80,15 @@
   .sticker, .decor-item{
     user-select:none;
   }
+  /* ===== 贴纸操作按钮：默认隐藏，悬停/选中时显示（与装饰控件一致） =====
+     .sticker .sticker-ctrl 两级类名优先级高于 Tailwind 的 .flex，能可靠覆盖 display */
+  .sticker .sticker-ctrl{ display:none; }
+  .sticker:hover .sticker-ctrl,
+  .sticker.active .sticker-ctrl{ display:flex; }
+  /* 贴纸右下角拉伸/缩放手柄：同样默认隐藏，悬停/选中显示 */
+  .sticker .resize-handle{ display:none; }
+  .sticker:hover .resize-handle,
+  .sticker.active .resize-handle{ display:block; }
 
   .template-card {
     transition: transform .15s ease, border-color .15s ease;
@@ -313,31 +322,21 @@
       <div class="mb-5 flex items-center justify-end">
         <button id="filterToggle" class="text-xs px-2 py-1 rounded border border-gray-200 text-primary hover:bg-blue-50 transition">滤镜：开</button>
       </div>
-
-      <!-- 贴纸库：默认收起，点击标题展开/收起，避免占用过多高度 -->
-      <button id="stickerToggle" class="w-full mt-5 pt-4 border-t border-gray-100 mb-3 flex items-center justify-between text-left group">
-        <span class="font-semibold text-gray-800 flex items-center gap-2 group-hover:text-primary transition-colors">
-          <i class="fa fa-smile-o text-primary"></i>贴纸库
-          <span class="text-[10px] font-normal text-gray-400">共<span id="stickerCount">0</span>个 · 点击展开</span>
-        </span>
-        <i id="stickerChevron" class="fa fa-chevron-down text-gray-400 transition-transform"></i>
-      </button>
-      <div id="stickerList" class="grid grid-cols-4 gap-2 mb-4 hidden"></div>
     </div>
   </aside>
 
   <!-- 中间：工具栏 + 预览画布 -->
   <section class="order-1 lg:order-2 flex-1 flex flex-col min-w-0 min-h-0 lg:h-full">
 
-    <!-- 文字编辑工具栏（每行文字独立设置内容/字号/颜色；位置·滤镜·操作在画布下方） -->
-    <div class="bg-white rounded-xl shadow px-4 py-3 shrink-0 max-h-[46vh] lg:max-h-[260px] overflow-y-auto scroll-panel">
+    <!-- 编辑工具栏（单区块）：文字设置 / 文字位置 / 图片滤镜 / 贴纸库 -->
+    <div class="bg-white rounded-xl shadow px-4 py-3 shrink-0 max-h-[46vh] lg:max-h-[340px] overflow-y-auto scroll-panel">
       <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-12 gap-x-5 gap-y-3 items-start">
 
         <!-- 主标题（独立：内容 / 字号 / 字体 / 颜色 / 字重 / 字间距） -->
         <div id="group-main" class="tgroup sm:col-span-1 xl:col-span-4">
           <span class="tgroup-title">主标题</span>
           <div class="flex gap-2">
-            <input id="mainTitle" class="tinput flex-1 min-w-0" value="视频标题"/>
+            <input id="mainTitle" class="tinput flex-1 min-w-0" value="视频封面一键生成"/>
             <select id="mainSize" class="tinput shrink-0" style="width:4.5rem" title="字号">
               <option value="16">16px</option>
               <option value="18">18px</option>
@@ -406,7 +405,7 @@
         <div id="group-sub" class="tgroup sm:col-span-1 xl:col-span-4">
           <span class="tgroup-title">副标题</span>
           <div class="flex gap-2">
-            <input id="subTitle" class="tinput flex-1 min-w-0" value="副标题或简介"/>
+            <input id="subTitle" class="tinput flex-1 min-w-0" value="diy.ee.cd"/>
             <select id="subSize" class="tinput shrink-0" style="width:4.5rem" title="字号">
               <option value="12">12px</option>
               <option value="14">14px</option>
@@ -520,7 +519,7 @@
         <div class="sm:col-span-2 xl:col-span-12 flex flex-wrap items-start gap-x-6 gap-y-3">
           <!-- 文字样式预设：下拉选择，一键套用适合封面的 配色/描边/阴影 组合 -->
           <div class="tgroup">
-            <span class="tgroup-title">样式预设</span>
+            <span class="tgroup-title">文字样式预设</span>
             <div class="trow">
               <span id="presetDot" class="style-preset-dot" style="background:#ffffff;border:2px solid #000000;" title="当前预设预览"></span>
               <select id="textStylePreset" class="tinput flex-1 min-w-0" style="min-width:8.5rem" title="一键套用文字样式">
@@ -556,39 +555,53 @@
         </div>
 
       </div>
-    </div>
 
-    <!-- 画布上方：位置对齐 / 滤镜（紧凑单行） -->
-    <div class="bg-white rounded-xl shadow px-3 py-2 mt-2 shrink-0 flex flex-wrap items-center gap-x-4 gap-y-2">
-      <div class="flex items-center gap-1">
-        <span class="text-[10px] text-gray-400 mr-0.5">位置</span>
-        <div class="flex gap-1">
-          <button data-align="tl" class="pos-btn">左上</button>
-          <button data-align="tc" class="pos-btn">中上</button>
-          <button data-align="tr" class="pos-btn">右上</button>
-          <button data-align="ml" class="pos-btn">左中</button>
-          <button data-align="mc" class="pos-btn">居中</button>
-          <button data-align="mr" class="pos-btn">右中</button>
-          <button data-align="bl" class="pos-btn">左下</button>
-          <button data-align="bc" class="pos-btn">中下</button>
-          <button data-align="br" class="pos-btn">右下</button>
+      <!-- 文字位置 / 图片滤镜：与文字设置同区块，分隔线分行 -->
+      <div class="border-t border-gray-100 mt-3 pt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <div class="flex items-center gap-1">
+          <span class="text-[10px] text-gray-400 mr-0.5">文字位置</span>
+          <div class="flex gap-1">
+            <button data-align="tl" class="pos-btn">左上</button>
+            <button data-align="tc" class="pos-btn">中上</button>
+            <button data-align="tr" class="pos-btn">右上</button>
+            <button data-align="ml" class="pos-btn">左中</button>
+            <button data-align="mc" class="pos-btn">居中</button>
+            <button data-align="mr" class="pos-btn">右中</button>
+            <button data-align="bl" class="pos-btn">左下</button>
+            <button data-align="bc" class="pos-btn">中下</button>
+            <button data-align="br" class="pos-btn">右下</button>
+          </div>
+        </div>
+        <div class="w-px h-5 bg-gray-100 hidden md:block"></div>
+        <div class="flex items-center gap-3 flex-wrap">
+          <span class="text-[10px] text-gray-400">图片滤镜</span>
+          <label class="brow">亮度<input id="brightness" type="range" min="60" max="140" value="100" class="w-20"/><b><span id="brightLabel">100</span>%</b></label>
+          <label class="brow">对比度<input id="contrast" type="range" min="60" max="140" value="100" class="w-20"/><b><span id="contrastLabel">100</span>%</b></label>
+          <label class="brow">饱和度<input id="saturate" type="range" min="0" max="180" value="100" class="w-20"/><b><span id="saturateLabel">100</span>%</b></label>
+          <label class="brow">模糊<input id="blur" type="range" min="0" max="10" value="0" class="w-20"/><b><span id="blurLabel">0</span>px</b></label>
+          <select id="filterPreset" class="h-6 w-24 text-[11px] border border-gray-300 rounded px-1 bg-white">
+            <option value="none">无</option>
+            <option value="warm">暖色</option>
+            <option value="cool">冷色</option>
+            <option value="vintage">复古</option>
+            <option value="bw">黑白</option>
+            <option value="film">胶片</option>
+          </select>
         </div>
       </div>
-      <div class="w-px h-5 bg-gray-100 hidden md:block"></div>
-      <div class="flex items-center gap-3 flex-wrap">
-        <span class="text-[10px] text-gray-400">滤镜</span>
-        <label class="brow">亮度<input id="brightness" type="range" min="60" max="140" value="100" class="w-20"/><b><span id="brightLabel">100</span>%</b></label>
-        <label class="brow">对比度<input id="contrast" type="range" min="60" max="140" value="100" class="w-20"/><b><span id="contrastLabel">100</span>%</b></label>
-        <label class="brow">饱和度<input id="saturate" type="range" min="0" max="180" value="100" class="w-20"/><b><span id="saturateLabel">100</span>%</b></label>
-        <label class="brow">模糊<input id="blur" type="range" min="0" max="10" value="0" class="w-20"/><b><span id="blurLabel">0</span>px</b></label>
-        <select id="filterPreset" class="h-6 w-24 text-[11px] border border-gray-300 rounded px-1 bg-white">
-          <option value="none">无</option>
-          <option value="warm">暖色</option>
-          <option value="cool">冷色</option>
-          <option value="vintage">复古</option>
-          <option value="bw">黑白</option>
-          <option value="film">胶片</option>
-        </select>
+
+      <!-- 贴纸库 / 上传贴纸：与上方设置同区块 -->
+      <div class="border-t border-gray-100 mt-3 pt-3 flex items-center gap-2 flex-wrap">
+        <button id="stickerToggle" class="tbtn shrink-0">
+          <i class="fa fa-smile-o text-primary mr-1"></i>贴纸库
+          <span class="text-[10px] text-gray-400 ml-1">共<span id="stickerCount">0</span>个</span>
+          <i id="stickerChevron" class="fa fa-chevron-down text-gray-400 ml-1 transition-transform"></i>
+        </button>
+        <div id="stickerList" class="hidden flex-1 min-w-0 flex flex-wrap gap-1 items-center max-h-[76px] overflow-y-auto scroll-panel"></div>
+        <label class="tbtn shrink-0 cursor-pointer" title="上传贴纸图片（PNG透明底最佳），插入画布后可拖拽/缩放">
+          <i class="fa fa-upload mr-1 text-primary"></i>上传贴纸
+          <input id="stickerUpload" type="file" accept="image/*" class="hidden"/>
+        </label>
       </div>
     </div>
 
@@ -635,7 +648,16 @@ const backendTemplateConfig = [
   { id: 't5', name: '商务极简', url: '', localFallback:'', thumbnail:'' },
   { id: 't6', name: '运动热血', url: '', localFallback:'', thumbnail:'' },
   { id: 't7', name: '音乐氛围', url: '', localFallback:'', thumbnail:'' },
-  { id: 't8', name: '粉色潮流', url: '', localFallback:'', thumbnail:'' }
+  { id: 't8', name: '粉色潮流', url: '', localFallback:'', thumbnail:'' },
+  // —— 扩充模板：Unsplash 免费图库（Unsplash License 可免费商用），已下载到本地 images/ ——
+  { id: 't9',  name: '代码编程', url: '', localFallback:'', thumbnail:'' },
+  { id: 't10', name: '科技地球', url: '', localFallback:'', thumbnail:'' },
+  { id: 't11', name: '团队协作', url: '', localFallback:'', thumbnail:'' },
+  { id: 't12', name: '山湖风光', url: '', localFallback:'', thumbnail:'' },
+  { id: 't13', name: '阳光森林', url: '', localFallback:'', thumbnail:'' },
+  { id: 't14', name: '晨雾山峦', url: '', localFallback:'', thumbnail:'' },
+  { id: 't17', name: '美食佳肴', url: '', localFallback:'', thumbnail:'' },
+  { id: 't19', name: 'DJ打碟',  url: '', localFallback:'', thumbnail:'' }
 ];
 // 本地模板背景图（images目录）；替换图片时直接覆盖同名文件即可，无需改代码
 const demoTemplateImgs = [
@@ -646,7 +668,15 @@ const demoTemplateImgs = [
   'images/t5.jpg',
   'images/t6.jpg',
   'images/t7.jpg',
-  'images/t8.jpg'
+  'images/t8.jpg',
+  'images/t9.jpg',
+  'images/t10.jpg',
+  'images/t11.jpg',
+  'images/t12.jpg',
+  'images/t13.jpg',
+  'images/t14.jpg',
+  'images/t17.jpg',
+  'images/t19.jpg'
 ];
 // 纯色背景预设：按色系分组，深色系更衬白字亮色标题
 const solidBgPresetGroups = [
@@ -743,7 +773,29 @@ const textStylePresets = [
   { name:'黑金质感', colors:['#ffd700','#e6c15c','#ffffff'], stroke:'#000000', strokeSize:3, shadow:6,  shadowColor:'#000000' },
   { name:'复古牛皮', colors:['#e8c39e','#ffffff','#ffffff'], stroke:'#5d4037', strokeSize:3, shadow:3,  shadowColor:'#000000' },
   { name:'水墨黑',   colors:['#1a1a1a','#333333','#1a1a1a'], stroke:'#ffffff', strokeSize:3, shadow:0,  shadowColor:'#000000' },
-  { name:'3D厚边',   colors:['#ffffff','#ffe14d','#ffffff'], stroke:'#000000', strokeSize:6, shadow:6,  shadowColor:'#000000' }
+  { name:'3D厚边',   colors:['#ffffff','#ffe14d','#ffffff'], stroke:'#000000', strokeSize:6, shadow:6,  shadowColor:'#000000' },
+  // —— 多巴胺糖果 ——
+  { name:'多巴胺绿', colors:['#c8ff3d','#ffffff','#ffffff'], stroke:'#111111', strokeSize:3, shadow:0,  shadowColor:'#000000' },
+  { name:'西瓜撞色', colors:['#ff4757','#ffffff','#ffffff'], stroke:'#2ed573', strokeSize:4, shadow:2,  shadowColor:'#000000' },
+  { name:'蓝橙对撞', colors:['#3742fa','#ffffff','#ffffff'], stroke:'#ff9f43', strokeSize:4, shadow:2,  shadowColor:'#000000' },
+  { name:'青粉对撞', colors:['#00d2d3','#ffffff','#ffffff'], stroke:'#ff6b81', strokeSize:4, shadow:2,  shadowColor:'#000000' },
+  { name:'奶油甜心', colors:['#ffeaa7','#ffffff','#ffffff'], stroke:'#e17055', strokeSize:4, shadow:3,  shadowColor:'#000000' },
+  // —— 国潮风 ——
+  { name:'故宫红',   colors:['#e54d42','#ffd76e','#ffffff'], stroke:'#ffffff', strokeSize:3, shadow:3,  shadowColor:'#000000' },
+  { name:'青花蓝',   colors:['#3f6fbe','#ffffff','#ffffff'], stroke:'#e8f1ff', strokeSize:3, shadow:3,  shadowColor:'#000000' },
+  { name:'琉璃金',   colors:['#ffe08a','#ffffff','#ffffff'], gradient:['#ffe08a','#c98a2d'], stroke:'#4a2500', strokeSize:3, shadow:4, shadowColor:'#000000' },
+  { name:'翠玉绿',   colors:['#2ecc71','#ffffff','#ffffff'], stroke:'#0e4429', strokeSize:3, shadow:0,  shadowColor:'#000000' },
+  // —— 赛博机能 ——
+  { name:'赛博紫',   colors:['#b026ff','#00f0ff','#ffffff'], stroke:'#12002e', strokeSize:2, shadow:10, shadowColor:'#b026ff' },
+  { name:'荧光机能', colors:['#39ff14','#ffffff','#ffffff'], stroke:'#001a00', strokeSize:2, shadow:8,  shadowColor:'#39ff14' },
+  { name:'霓虹粉紫', colors:['#ff2d95','#00e5ff','#ffffff'], stroke:'#1a0033', strokeSize:2, shadow:10, shadowColor:'#ff2d95' },
+  { name:'海盐苏打', colors:['#9be7ff','#ffffff','#ffffff'], stroke:'#0277bd', strokeSize:4, shadow:2,  shadowColor:'#000000' },
+  // —— 渐变花字·补充 ——
+  { name:'蓝海渐变', colors:['#4facfe','#ffffff','#ffffff'], gradient:['#4facfe','#00f2fe'], stroke:'#0b3d78', strokeSize:3, shadow:3, shadowColor:'#000000' },
+  { name:'玫瑰渐变', colors:['#f953c6','#ffffff','#ffffff'], gradient:['#f953c6','#b91d73'], stroke:'#ffffff', strokeSize:3, shadow:3, shadowColor:'#000000' },
+  { name:'落日渐变', colors:['#ff9966','#ffffff','#ffffff'], gradient:['#ff9966','#ff5e62'], stroke:'#7a1c00', strokeSize:4, shadow:4, shadowColor:'#000000' },
+  { name:'葡萄渐变', colors:['#a18cd1','#ffffff','#ffffff'], gradient:['#a18cd1','#fbc2eb'], stroke:'#5b2c6f', strokeSize:3, shadow:3, shadowColor:'#000000' },
+  { name:'抹茶渐变', colors:['#a8e063','#ffffff','#ffffff'], gradient:['#a8e063','#56ab2f'], stroke:'#1d3d10', strokeSize:3, shadow:3, shadowColor:'#000000' }
 ];
 
 const state = {
@@ -752,8 +804,8 @@ const state = {
   bgMode: 'image',                                        // image / color / gradient
   bgColor: '#0f172a',
   bgGradient: { c1: '#667eea', c2: '#764ba2', angle: 135 },
-  mainTitle: '视频标题',
-  subTitle: '副标题或简介',
+  mainTitle: '视频封面一键生成',
+  subTitle: 'diy.ee.cd',
   mainFontFamily: 'font-cover-bold',
   subFontFamily: 'font-cover-sub',
   mainFontWeight: 'bold',
@@ -890,14 +942,15 @@ function renderStickers() {
   const total = stickerGroups.reduce((n, g) => n + g.items.length, 0);
   const countEl = document.getElementById('stickerCount');
   if (countEl) countEl.textContent = total;
+  // 画布上方横向排布：分组标签内联，emoji小方块可换行，超高区域内部滚动
   stickerGroups.forEach(group => {
-    const title = document.createElement('div');
-    title.className = 'col-span-4 pt-2 text-[10px] font-medium text-gray-400 tracking-wider';
+    const title = document.createElement('span');
+    title.className = 'text-[10px] font-medium text-gray-400 px-1 shrink-0';
     title.textContent = group.name;
     list.appendChild(title);
     group.items.forEach(emoji => {
       const item = document.createElement('div');
-      item.className = 'aspect-square flex items-center justify-center text-2xl cursor-pointer border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-primary transition';
+      item.className = 'w-8 h-8 shrink-0 flex items-center justify-center text-xl cursor-pointer border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-primary transition';
       item.textContent = emoji;
       item.title = '点击添加到画布';
       item.onclick = () => {
@@ -1219,7 +1272,7 @@ function renderDragItems(){
   const belowLayer = document.getElementById('decorLayerBelow');
   container.innerHTML='';
   belowLayer.innerHTML='';
-  // 渲染贴纸
+  // 渲染贴纸（emoji 或上传图片），操作按钮默认隐藏，悬停/选中显示
   state.stickerList.forEach(s=>{
     const el = document.createElement('div');
     el.className='sticker drag-item';
@@ -1228,21 +1281,65 @@ function renderDragItems(){
     el.style.zIndex = s.zIndex;
     // 以中心点定位：元素视觉中心始终落在拖拽坐标上，不再"跟手错位"
     el.style.transform = `translate(-50%,-50%) scale(${s.scale}) rotate(${s.rotate}deg)`;
+    // 上传图片贴纸（PNG透明底最佳），emoji贴纸保持64px字号
+    const visual = s.img
+      ? `<img src="${s.img}" draggable="false" style="max-width:140px;max-height:140px;display:block;" alt="贴纸"/>`
+      : `<span style="font-size:64px;">${s.emoji}</span>`;
     el.innerHTML = `
       <div class="relative">
-        <div class="absolute -top-6 left-0 flex gap-1" data-html2canvas-ignore>
+        <div class="sticker-ctrl absolute -top-6 left-0 flex gap-1" data-html2canvas-ignore>
           <button class="control-btn-xs border bg-white rounded up">↑</button>
           <button class="control-btn-xs border bg-white rounded down">↓</button>
           <button class="control-btn-xs border bg-white rounded del">×</button>
         </div>
-        <div class="absolute -bottom-6 left-0 flex gap-1" data-html2canvas-ignore>
-          <input class="scaleInput w-12 text-xs border bg-white" type="number" step="0.1" min="0.2" max="3" value="${s.scale}">
-          <input class="rotateInput w-12 text-xs border bg-white" type="number" step="1" min="0" max="360" value="${s.rotate}">
+        <div class="sticker-ctrl absolute -bottom-6 left-0 flex gap-1" data-html2canvas-ignore>
+          <input class="scaleInput w-10 h-5 text-[10px] border bg-white px-0.5" type="number" step="0.1" min="0.2" max="3" value="${s.scale}" title="缩放">
+          <input class="rotateInput w-10 h-5 text-[10px] border bg-white px-0.5" type="number" step="1" min="0" max="360" value="${s.rotate}" title="旋转角度">
         </div>
-        <span style="font-size:64px;">${s.emoji}</span>
+        ${visual}
       </div>
     `;
     makeDraggableByPct(el, s);
+    // 右下角手柄：拖拽等比缩放贴纸（emoji与上传图片通用），按指针到贴纸中心距离比例换算
+    const handle = document.createElement('div');
+    handle.className = 'resize-handle';
+    handle.title = '拖拽调整贴纸大小';
+    el.appendChild(handle);
+    handle.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      el.classList.add('active'); // 拖拽过程中保持控件可见
+      handle.setPointerCapture(e.pointerId);
+      const stage = document.getElementById('coverStage');
+      const rect = getStageRect();
+      const W = parseFloat(stage.style.width) || rect.width;
+      const H = parseFloat(stage.style.height) || rect.height;
+      // 屏幕像素 → 画布逻辑像素（画布可能被 fitStage 缩放）
+      const toStage = (cx, cy) => ({ x: (cx - rect.left) * (W / rect.width), y: (cy - rect.top) * (H / rect.height) });
+      const c = { x: s.xPct / 100 * W, y: s.yPct / 100 * H };
+      const p0 = toStage(e.clientX, e.clientY);
+      const d0 = Math.max(8, Math.hypot(p0.x - c.x, p0.y - c.y));
+      const s0 = s.scale || 1;
+      const onMove = ev => {
+        const p = toStage(ev.clientX, ev.clientY);
+        const f = Math.hypot(p.x - c.x, p.y - c.y) / d0;
+        const ns = Math.min(3, Math.max(0.2, Math.round(s0 * f * 100) / 100));
+        if (ns !== s.scale) {
+          s.scale = ns;
+          el.style.transform = `translate(-50%,-50%) scale(${s.scale}) rotate(${s.rotate}deg)`;
+          const inp = el.querySelector('.scaleInput');
+          if (inp) inp.value = s.scale;
+        }
+      };
+      const onUp = () => {
+        handle.removeEventListener('pointermove', onMove);
+        handle.removeEventListener('pointerup', onUp);
+        handle.removeEventListener('pointercancel', onUp);
+      };
+      handle.addEventListener('pointermove', onMove);
+      handle.addEventListener('pointerup', onUp);
+      handle.addEventListener('pointercancel', onUp);
+    });
     //绑定控件
     el.querySelector('.up').onclick=(e)=>{e.stopPropagation(); s.zIndex+=1; renderDragItems();};
     el.querySelector('.down').onclick=(e)=>{e.stopPropagation(); s.zIndex-=1; renderDragItems();};
@@ -1616,6 +1713,22 @@ function bindEvents() {
     const collapsed = list.classList.toggle('hidden');
     chevron.classList.toggle('rotate-180', !collapsed);
   });
+  // 上传贴纸图片：插入画布中心，可继续拖拽/缩放/旋转
+  document.getElementById('stickerUpload').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      state.stickerList.push({
+        id: Date.now() + Math.random(),
+        img: ev.target.result,   // DataURL，导出无跨域问题
+        xPct: 50, yPct: 50, scale: 1, rotate: 0, zIndex: 10
+      });
+      renderDragItems();
+    };
+    reader.readAsDataURL(file);
+    e.target.value = ''; // 清空以便重复上传同一文件
+  });
   document.getElementById('sizeSelect').addEventListener('change', e => {
     state.size = e.target.value;
     applySize();
@@ -1687,7 +1800,7 @@ function bindEvents() {
   document.getElementById('filterPreset').addEventListener('change', e => { state.filterPreset = e.target.value; applyFilter(); });
   document.getElementById('filterToggle').addEventListener('click', () => { state.filterEnabled = !state.filterEnabled; syncFilterToggle(); applyFilter(); });
   document.getElementById('resetBtn').addEventListener('click', () => {
-    state.mainTitle = '视频标题'; state.subTitle = '副标题或简介';
+    state.mainTitle = '视频封面一键生成'; state.subTitle = 'diy.ee.cd';
     state.mainFontFamily = 'font-cover-bold'; state.subFontFamily = 'font-cover-sub'; state.thirdFontFamily = 'font-cover-sub';
     state.mainFontWeight = 'bold'; state.subFontWeight = 'bold'; state.thirdFontWeight = 'bold';
     state.mainLetterSpacing = 1; state.subLetterSpacing = 1; state.thirdLetterSpacing = 1;
