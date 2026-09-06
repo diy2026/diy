@@ -11,6 +11,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=Archivo+Black&family=Bangers&family=Bebas+Neue&family=Liu+Jian+Mao+Cao&family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@400;700;900&family=Playfair+Display:wght@700;900&family=ZCOOL+KuaiLe&family=ZCOOL+QingKe+HuangYou&family=ZCOOL+XiaoWei&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+<!-- 开源/免费商用中文字体（jsDelivr CDN 按需分包加载；均可免费商用） -->
+<link href="https://cdn.jsdelivr.net/npm/cn-fontsource-smiley-sans-oblique-regular/font.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/cn-fontsource-lxgw-wen-kai-screen/font.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/cn-fontsource-ding-talk-jin-bu-ti-regular/font.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/cn-fontsource-hongleixingshu-regular/font.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/cn-fontsource-alimama-dong-fang-da-kai-regular/font.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/cn-fontsource-maoken-zhuyuan-ti-regular/font.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/cn-fontsource-yozai/font.css" rel="stylesheet">
 
 <script>
   tailwind.config = {
@@ -131,6 +139,14 @@
   .font-cover-slab { font-family: "Alfa Slab One", "Noto Serif SC", serif; }
   .font-cover-bangers { font-family: "Bangers", "Noto Sans SC", cursive; }
   .font-cover-playfair { font-family: "Playfair Display", "Noto Serif SC", serif; }
+  /* ===== 开源/免费商用字体扩充（均允许免费商用） ===== */
+  .font-cover-smiley  { font-family: "Smiley Sans Oblique", "Noto Sans SC", sans-serif; } /* 得意黑：斜体运动感，标题热门款 */
+  .font-cover-jinbu   { font-family: "DingTalk JinBuTi", "Noto Sans SC", sans-serif; }    /* 钉钉进步体：硬朗有力 */
+  .font-cover-dongkai { font-family: "Alimama DongFangDaKai", "Noto Serif SC", serif; }   /* 阿里妈妈东方大楷：颜体气势 */
+  .font-cover-honglei { font-family: "hongleixingshu", "Ma Shan Zheng", cursive; }        /* 鸿雷行书简：飘逸大字 */
+  .font-cover-wenkai  { font-family: "LXGW WenKai Screen", "Noto Serif SC", serif; }      /* 霞鹜文楷：温润文艺 */
+  .font-cover-zhuyuan { font-family: "MaokenZhuyuanTi", "ZCOOL KuaiLe", cursive; }        /* 猫啃珠圆体：可爱圆体 */
+  .font-cover-yozai   { font-family: "Yozai", "Ma Shan Zheng", cursive; }                 /* 悠哉字体：慵懒手写 */
 
   .control-btn-xs{
     font-size:10px; padding:2px 4px;
@@ -153,6 +169,9 @@
   .tbtn{ height:28px; border:1px solid #e5e7eb; border-radius:6px; font-size:11px; color:#4b5563; padding:0 10px; background:#fff; transition:all .15s ease; white-space:nowrap; }
   .tbtn:hover{ background:#eff6ff; border-color:#4080ff; color:#4080ff; }
 
+  /* ===== 文字样式预设：下拉框旁的色点预览（主色+描边圆环） ===== */
+  .style-preset-dot{ width:14px; height:14px; border-radius:50%; flex:none; box-shadow:inset 0 0 0 1px rgba(0,0,0,.12); }
+
   /* ===== 画布下方紧凑功能条：位置 / 滤镜 / 操作 ===== */
   .pos-btn{ height:24px; min-width:34px; padding:0 5px; font-size:10px; border:1px solid #e5e7eb; border-radius:5px; background:#fff; color:#4b5563; transition:all .15s ease; white-space:nowrap; }
   .pos-btn:hover{ background:#eff6ff; border-color:#4080ff; color:#4080ff; }
@@ -163,12 +182,15 @@
   .text-hit{ cursor:grab; }
   .text-hit:active{ cursor:grabbing; }
 
-  /* ===== 装饰条右下角拖拽调整大小手柄 ===== */
+  /* ===== 装饰条右下角拖拽调整大小手柄 =====
+     加大面积并提高层级：必须压在 ctrl-top/ctrl-bottom 操作条之上，
+     否则下方操作按钮会挡住手柄导致无法拉伸 */
   .resize-handle{
-    position:absolute; right:-6px; bottom:-6px; width:12px; height:12px;
-    background:#4080ff; border:2px solid #fff; border-radius:3px;
+    position:absolute; right:-8px; bottom:-8px; width:16px; height:16px;
+    background:#4080ff; border:2px solid #fff; border-radius:4px;
     cursor:nwse-resize; box-shadow:0 1px 4px rgba(0,0,0,.3);
     touch-action:none;
+    z-index:40;
   }
 
   /* ===== 装饰：锚点 + 独立混合层 =====
@@ -178,7 +200,7 @@
   .decor-item.active .shape-wrap{ outline:2px dashed #4080ff; outline-offset:3px; border-radius:4px; }
   .shape-wrap{ position:absolute; left:0; top:0; white-space:nowrap; transform-origin:center center; }
   .shape-wrap.blend-multiply{ mix-blend-mode:multiply; }
-  .ctrl-top,.ctrl-bottom{ position:absolute; display:flex; gap:4px; align-items:center; pointer-events:auto; }
+  .ctrl-top,.ctrl-bottom{ position:absolute; display:flex; gap:4px; align-items:center; pointer-events:auto; z-index:30; }
   .blend-label{ display:flex; align-items:center; gap:2px; font-size:10px; color:#4b5563; background:#fff; border:1px solid #e5e7eb; border-radius:4px; padding:0 3px; height:20px; cursor:pointer; user-select:none; }
 
   /* ===== 画布内编辑控件：默认隐藏，悬停或选中时显示 ===== */
@@ -287,14 +309,14 @@
               <option value="36">36px</option>
               <option value="40">40px</option>
               <option value="44">44px</option>
-              <option value="48" selected>48px</option>
+              <option value="48">48px</option>
               <option value="54">54px</option>
               <option value="60">60px</option>
               <option value="66">66px</option>
               <option value="72">72px</option>
               <option value="80">80px</option>
               <option value="90">90px</option>
-              <option value="100">100px</option>
+              <option value="100" selected>100px</option>
               <option value="110">110px</option>
               <option value="120">120px</option>
               <option value="130">130px</option>
@@ -317,6 +339,13 @@
             <option value="font-cover-slab">Alfa Slab 复古衬线（英文）</option>
             <option value="font-cover-bangers">Bangers 漫画海报（英文）</option>
             <option value="font-cover-playfair">Playfair 优雅衬线（英文）</option>
+            <option value="font-cover-smiley">得意黑（斜体运动感）</option>
+            <option value="font-cover-jinbu">钉钉进步体（硬朗有力）</option>
+            <option value="font-cover-dongkai">东方大楷（颜体气势）</option>
+            <option value="font-cover-honglei">鸿雷行书（飘逸大字）</option>
+            <option value="font-cover-wenkai">霞鹜文楷（温润文艺）</option>
+            <option value="font-cover-zhuyuan">猫啃珠圆（可爱圆体）</option>
+            <option value="font-cover-yozai">悠哉体（慵懒手写）</option>
           </select>
           <div class="trow">
             <span class="tname w-8">颜色</span>
@@ -344,7 +373,7 @@
               <option value="18">18px</option>
               <option value="20">20px</option>
               <option value="22">22px</option>
-              <option value="24" selected>24px</option>
+              <option value="24">24px</option>
               <option value="26">26px</option>
               <option value="28">28px</option>
               <option value="30">30px</option>
@@ -353,7 +382,7 @@
               <option value="40">40px</option>
               <option value="44">44px</option>
               <option value="48">48px</option>
-              <option value="54">54px</option>
+              <option value="54" selected>54px</option>
               <option value="60">60px</option>
               <option value="66">66px</option>
               <option value="72">72px</option>
@@ -369,6 +398,10 @@
             <option value="font-cover-butter">黄油体</option>
             <option value="font-cover-xiaowei">小薇宋</option>
             <option value="font-cover-playfair">Playfair 优雅衬线（英文）</option>
+            <option value="font-cover-wenkai">霞鹜文楷（文艺）</option>
+            <option value="font-cover-zhuyuan">猫啃珠圆（可爱）</option>
+            <option value="font-cover-yozai">悠哉体（手写）</option>
+            <option value="font-cover-smiley">得意黑（斜体）</option>
           </select>
           <div class="trow">
             <span class="tname w-8">颜色</span>
@@ -397,13 +430,13 @@
                 <option value="12">12px</option>
                 <option value="14">14px</option>
                 <option value="16">16px</option>
-                <option value="18" selected>18px</option>
+                <option value="18">18px</option>
                 <option value="20">20px</option>
                 <option value="22">22px</option>
                 <option value="24">24px</option>
                 <option value="26">26px</option>
                 <option value="28">28px</option>
-                <option value="30">30px</option>
+                <option value="30" selected>30px</option>
                 <option value="32">32px</option>
                 <option value="36">36px</option>
                 <option value="40">40px</option>
@@ -422,6 +455,9 @@
               <option value="font-cover-butter">黄油体</option>
               <option value="font-cover-xiaowei">小薇宋</option>
               <option value="font-cover-playfair">Playfair 优雅衬线（英文）</option>
+              <option value="font-cover-wenkai">霞鹜文楷（文艺）</option>
+              <option value="font-cover-zhuyuan">猫啃珠圆（可爱）</option>
+              <option value="font-cover-yozai">悠哉体（手写）</option>
             </select>
             <div class="trow">
               <span class="tname w-8">颜色</span>
@@ -441,6 +477,16 @@
 
         <!-- 装饰 / 描边 / 阴影：同一行排列，滑条窄宽度 -->
         <div class="sm:col-span-2 xl:col-span-12 flex flex-wrap items-start gap-x-6 gap-y-3">
+          <!-- 文字样式预设：下拉选择，一键套用适合封面的 配色/描边/阴影 组合 -->
+          <div class="tgroup">
+            <span class="tgroup-title">样式预设</span>
+            <div class="trow">
+              <span id="presetDot" class="style-preset-dot" style="background:#ffffff;border:2px solid #000000;" title="当前预设预览"></span>
+              <select id="textStylePreset" class="tinput flex-1 min-w-0" style="min-width:8.5rem" title="一键套用文字样式">
+                <option value="">选择样式预设…</option>
+              </select>
+            </div>
+          </div>
           <!-- 装饰 -->
           <div class="tgroup">
             <span class="tgroup-title">装饰</span>
@@ -471,26 +517,7 @@
       </div>
     </div>
 
-    <!-- 预览画布 -->
-    <div id="stageArea" class="flex-1 min-h-0 h-[52vh] lg:h-auto flex items-center justify-center overflow-hidden mt-3">
-      <div id="stageWrap" class="bg-white rounded-xl shadow p-4 sm:p-6">
-        <div id="stageScaler" class="relative">
-          <div id="coverStage" class="cover-stage">
-            <img id="bgImage" class="absolute inset-0 w-full h-full object-cover" crossorigin="anonymous" alt="bg"/>
-            <div id="filterLayer" class="filter-layer hidden"></div>
-            <!-- 装饰下层：位于文字下方（仅背景条/遮罩条可切换到此层） -->
-            <div id="decorLayerBelow" class="drag-hit-layer"></div>
-            <!-- SVG文字层，解决描边导出不一致 -->
-            <svg id="textSvgCanvas" class="cover-svg-canvas"></svg>
-            <!-- 文字拖拽命中层（透明，仅编辑用，导出排除） -->
-            <div id="textHitLayer" class="drag-hit-layer" data-html2canvas-ignore></div>
-            <!-- 拖拽交互层：贴纸、装饰 -->
-            <div id="dragContainer" class="drag-hit-layer"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- 画布下方：位置对齐 / 滤镜 / 操作（紧凑单行） -->
+    <!-- 画布上方：位置对齐 / 滤镜（紧凑单行） -->
     <div class="bg-white rounded-xl shadow px-3 py-2 mt-2 shrink-0 flex flex-wrap items-center gap-x-4 gap-y-2">
       <div class="flex items-center gap-1">
         <span class="text-[10px] text-gray-400 mr-0.5">位置</span>
@@ -521,6 +548,26 @@
           <option value="bw">黑白</option>
           <option value="film">胶片</option>
         </select>
+      </div>
+    </div>
+
+    <!-- 预览画布 -->
+    <div id="stageArea" class="flex-1 min-h-0 h-[52vh] lg:h-auto flex items-center justify-center overflow-hidden mt-3">
+      <div id="stageWrap" class="bg-white rounded-xl shadow p-4 sm:p-6">
+        <div id="stageScaler" class="relative">
+          <div id="coverStage" class="cover-stage">
+            <img id="bgImage" class="absolute inset-0 w-full h-full object-cover" crossorigin="anonymous" alt="bg"/>
+            <div id="filterLayer" class="filter-layer hidden"></div>
+            <!-- 装饰下层：位于文字下方（仅背景条/遮罩条可切换到此层） -->
+            <div id="decorLayerBelow" class="drag-hit-layer"></div>
+            <!-- SVG文字层，解决描边导出不一致 -->
+            <svg id="textSvgCanvas" class="cover-svg-canvas"></svg>
+            <!-- 文字拖拽命中层（透明，仅编辑用，导出排除） -->
+            <div id="textHitLayer" class="drag-hit-layer" data-html2canvas-ignore></div>
+            <!-- 拖拽交互层：贴纸、装饰 -->
+            <div id="dragContainer" class="drag-hit-layer"></div>
+          </div>
+        </div>
       </div>
     </div>
     <p class="text-xs text-gray-500 mt-2 text-center shrink-0">提示：文字 / 贴纸 / 装饰均可直接拖拽到任意位置，画布自动缩放适配窗口；编辑控件不会出现在导出图中。</p>
@@ -575,6 +622,46 @@ const decorTypes = [
   {type:'arrow', label:'箭头', icon:'fa-long-arrow-right'},
   {type:'tagCorner', label:'角标标签', icon:'fa-tag'}
 ];
+// 文字样式预设：适合封面的 配色/描边/阴影 组合，一键套用到主/副/三级标题
+// colors: [主标题, 副标题, 三级标题]；gradient 可选，仅作用于主标题（渐变填充）
+const textStylePresets = [
+  // —— 经典撞色（纯色 + 描边）——
+  { name:'抖音黄',   colors:['#ffe14d','#ffffff','#ffffff'], stroke:'#000000', strokeSize:5, shadow:0,  shadowColor:'#000000' },
+  { name:'白字黑边', colors:['#ffffff','#ffffff','#ffffff'], stroke:'#000000', strokeSize:4, shadow:2,  shadowColor:'#000000' },
+  { name:'热血红',   colors:['#ff3b30','#ffffff','#ffffff'], stroke:'#ffffff', strokeSize:4, shadow:3,  shadowColor:'#000000' },
+  { name:'科技蓝',   colors:['#3d8bff','#ffffff','#ffffff'], stroke:'#ffffff', strokeSize:3, shadow:3,  shadowColor:'#000000' },
+  { name:'白字蓝边', colors:['#ffffff','#ffffff','#ffffff'], stroke:'#2563eb', strokeSize:4, shadow:2,  shadowColor:'#000000' },
+  { name:'黑字黄边', colors:['#222222','#222222','#222222'], stroke:'#ffe14d', strokeSize:3, shadow:0,  shadowColor:'#000000' },
+  { name:'活力橙',   colors:['#ff9f43','#ffffff','#ffffff'], stroke:'#7a2e00', strokeSize:4, shadow:0,  shadowColor:'#000000' },
+  { name:'柠檬绿',   colors:['#c6ff5e','#ffffff','#ffffff'], stroke:'#2e5a00', strokeSize:4, shadow:0,  shadowColor:'#000000' },
+  { name:'蜜桃粉边', colors:['#ffffff','#ffffff','#ffffff'], stroke:'#ff7eb6', strokeSize:4, shadow:2,  shadowColor:'#ff4d94' },
+  { name:'撞色红黄', colors:['#ffd400','#ffffff','#ffffff'], stroke:'#d40000', strokeSize:5, shadow:2,  shadowColor:'#000000' },
+  { name:'中国红金', colors:['#ff3b30','#ffd54a','#ffffff'], stroke:'#ffffff', strokeSize:3, shadow:3,  shadowColor:'#000000' },
+  { name:'薄荷清新', colors:['#ffffff','#eafff5','#ffffff'], stroke:'#0f766e', strokeSize:4, shadow:2,  shadowColor:'#000000' },
+  // —— 发光霓虹 ——
+  { name:'霓虹发光', colors:['#8ef6ff','#8ef6ff','#ffffff'], stroke:'#083b66', strokeSize:2, shadow:14, shadowColor:'#00c8ff' },
+  { name:'粉色甜美', colors:['#ff7eb6','#ffffff','#ffffff'], stroke:'#ffffff', strokeSize:4, shadow:4,  shadowColor:'#ff4d94' },
+  { name:'立体阴影', colors:['#ffffff','#ffe14d','#ffffff'], stroke:'#111111', strokeSize:2, shadow:10, shadowColor:'#000000' },
+  { name:'金色发光', colors:['#ffe985','#ffffff','#ffffff'], stroke:'#8a6d00', strokeSize:2, shadow:16, shadowColor:'#ffb700' },
+  { name:'红色霓虹', colors:['#ff8fa3','#ffffff','#ffffff'], stroke:'#5c0011', strokeSize:2, shadow:14, shadowColor:'#ff2d55' },
+  { name:'白色泛光', colors:['#ffffff','#ffffff','#ffffff'], stroke:'#4b5563', strokeSize:2, shadow:16, shadowColor:'#ffffff' },
+  // —— 渐变花字（主标题渐变填充）——
+  { name:'熔金渐变', colors:['#fff3a0','#ffffff','#ffffff'], gradient:['#fff3a0','#ff9d2e'], stroke:'#7a3c00', strokeSize:3, shadow:4, shadowColor:'#000000' },
+  { name:'紫夜渐变', colors:['#d8b4fe','#ffffff','#ffffff'], gradient:['#c084fc','#5b21b6'], stroke:'#ffffff', strokeSize:3, shadow:4, shadowColor:'#000000' },
+  { name:'香槟金渐变', colors:['#f7e8b5','#ffffff','#ffffff'], gradient:['#f7e8b5','#c9a227'], stroke:'#5a4a00', strokeSize:3, shadow:4, shadowColor:'#000000' },
+  { name:'蜜桃渐变', colors:['#ffd3a5','#ffffff','#ffffff'], gradient:['#ffd3a5','#fd6585'], stroke:'#ffffff', strokeSize:3, shadow:4, shadowColor:'#ff6f91' },
+  { name:'青柠渐变', colors:['#d4fc79','#ffffff','#ffffff'], gradient:['#d4fc79','#96e6a1'], stroke:'#1d5c2e', strokeSize:3, shadow:3, shadowColor:'#000000' },
+  { name:'蓝紫渐变', colors:['#a8d8ff','#ffffff','#ffffff'], gradient:['#89f7fe','#66a6ff'], stroke:'#0b3d78', strokeSize:3, shadow:3, shadowColor:'#000000' },
+  { name:'火焰渐变', colors:['#ffe259','#ffffff','#ffffff'], gradient:['#ffe259','#ffa751'], stroke:'#7a1c00', strokeSize:4, shadow:4, shadowColor:'#000000' },
+  { name:'樱花渐变', colors:['#ffdde1','#ffffff','#ffffff'], gradient:['#ffdde1','#ee9ca7'], stroke:'#a34a5e', strokeSize:3, shadow:3, shadowColor:'#000000' },
+  { name:'极光渐变', colors:['#b8ffd9','#ffffff','#ffffff'], gradient:['#43e97b','#38f9d7'], stroke:'#0b4d3a', strokeSize:3, shadow:3, shadowColor:'#000000' },
+  { name:'星空渐变', colors:['#c3e0ff','#ffffff','#ffffff'], gradient:['#8ec5fc','#e0c3fc'], stroke:'#3b2f7a', strokeSize:3, shadow:3, shadowColor:'#000000' },
+  // —— 特殊质感 ——
+  { name:'黑金质感', colors:['#ffd700','#e6c15c','#ffffff'], stroke:'#000000', strokeSize:3, shadow:6,  shadowColor:'#000000' },
+  { name:'复古牛皮', colors:['#e8c39e','#ffffff','#ffffff'], stroke:'#5d4037', strokeSize:3, shadow:3,  shadowColor:'#000000' },
+  { name:'水墨黑',   colors:['#1a1a1a','#333333','#1a1a1a'], stroke:'#ffffff', strokeSize:3, shadow:0,  shadowColor:'#000000' },
+  { name:'3D厚边',   colors:['#ffffff','#ffe14d','#ffffff'], stroke:'#000000', strokeSize:6, shadow:6,  shadowColor:'#000000' }
+];
 
 const state = {
   size: '16:9',
@@ -589,25 +676,26 @@ const state = {
   mainLetterSpacing: 1,
   subLetterSpacing: 1,
   thirdLetterSpacing: 1,
-  mainSize: 48,
-  subSize: 24,
+  mainSize: 100,
+  subSize: 54,
   mainColor: '#ffffff',
+  mainGradient: null,   // 主标题渐变填充 ['#色1','#色2']，样式预设启用；手动改主标题颜色时清除
   subColor: '#ffdd44',
   strokeColor: '#000000',
   strokeSize: 2,
   shadowColor: '#000000',
   shadow: 5,
-  mainAlign: 'start',   // start / middle / end，配合九宫格快速对齐
-  subAlign: 'start',
-  mainPos: { xPct: 8, yPct: 40 },
-  subPos: { xPct: 8, yPct: 62 },
+  mainAlign: 'middle',  // start / middle / end，配合九宫格快速对齐；默认水平居中
+  subAlign: 'middle',
+  mainPos: { xPct: 50, yPct: 40 },
+  subPos: { xPct: 50, yPct: 62 },
   hasThird: false,      // 三级标题：按需添加
   thirdTitle: '三级标题',
   thirdFontFamily: 'font-cover-sub',
-  thirdSize: 18,
+  thirdSize: 30,
   thirdColor: '#ffffff',
-  thirdAlign: 'start',
-  thirdPos: { xPct: 8, yPct: 74 },
+  thirdAlign: 'middle',
+  thirdPos: { xPct: 50, yPct: 74 },
   brightness: 100,
   contrast: 100,
   saturate: 100,
@@ -745,14 +833,58 @@ function renderDecorPanel(){
     btn.innerHTML=`<i class="fa ${d.icon} mr-1 text-primary"></i>${d.label}`;
     btn.onclick=()=>{
       const item = { id:Date.now()+Math.random(), type:d.type, xPct:40,yPct:40, scale:1, rotate:0, zIndex:5 };
-      if (d.type === 'bgBar') { item.color1 = '#000000'; item.opacity = 0.6; item.w = 180; item.h = 44; item.blend = 'normal'; item.belowText = false; }
-      if (d.type === 'gradientBar') { item.color1 = '#ff4466'; item.color2 = '#ffaa22'; item.w = 220; item.h = 50; item.blend = 'normal'; item.belowText = false; }
-      if (d.type === 'tagCorner') { item.label = '标签'; item.fontSize = 14; }
+      // 默认尺寸按主标题100px字号设计：背景条/遮罩条可直接垫在标题下方
+      if (d.type === 'bgBar') { item.color1 = '#000000'; item.opacity = 0.6; item.w = 360; item.h = 110; item.blend = 'normal'; item.belowText = false; }
+      if (d.type === 'gradientBar') { item.color1 = '#ff4466'; item.color2 = '#ffaa22'; item.w = 420; item.h = 120; item.blend = 'normal'; item.belowText = false; }
+      if (d.type === 'tagCorner') { item.label = '标签'; item.fontSize = 22; }
       state.decorList.push(item);
       renderDragItems();
     };
     list.appendChild(btn);
   })
+}
+
+// ===================== 文字样式预设 =====================
+// 一键套用：主/副/三级标题颜色 + 描边颜色/大小 + 阴影颜色/强度，渐变仅作用于主标题
+function applyTextStylePreset(p){
+  state.mainColor = p.colors[0];
+  state.subColor = p.colors[1];
+  state.thirdColor = p.colors[2];
+  state.mainGradient = p.gradient || null;
+  state.strokeColor = p.stroke;
+  state.strokeSize = p.strokeSize;
+  state.shadowColor = p.shadowColor;
+  state.shadow = p.shadow;
+  // 工具栏控件与数值标签同步，避免显示残留旧值
+  document.getElementById('mainColor').value = state.mainColor;
+  document.getElementById('subColor').value = state.subColor;
+  document.getElementById('thirdColor').value = state.thirdColor;
+  document.getElementById('strokeColor').value = state.strokeColor;
+  document.getElementById('strokeSize').value = state.strokeSize;
+  document.getElementById('strokeSizeLabel').textContent = state.strokeSize;
+  document.getElementById('shadowColor').value = state.shadowColor;
+  document.getElementById('shadow').value = state.shadow;
+  document.getElementById('shadowLabel').textContent = state.shadow;
+  // 色点预览同步：主色（或渐变）+ 描边色圆环
+  const dot = document.getElementById('presetDot');
+  dot.style.background = p.gradient ? `linear-gradient(135deg, ${p.gradient[0]}, ${p.gradient[1]})` : p.colors[0];
+  dot.style.border = `2px solid ${p.stroke}`;
+  renderSvgText();
+}
+
+function renderTextStylePresets(){
+  const sel = document.getElementById('textStylePreset');
+  sel.innerHTML = '<option value="">选择样式预设…</option>';
+  textStylePresets.forEach((p, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = p.name;
+    sel.appendChild(opt);
+  });
+  sel.onchange = () => {
+    const p = textStylePresets[+sel.value];
+    if (p) applyTextStylePreset(p);
+  };
 }
 
 // SVG渲染文字：解决webkit‑text‑stroke导出不一致
@@ -763,9 +895,10 @@ function renderSvgText(){
   const h = parseFloat(stage.style.height);
   svg.innerHTML='';
 
+  // 公共defs：阴影滤镜（阴影>0时）+ 主标题渐变填充（样式预设启用时）
+  const defs = document.createElementNS("http://www.w3.org/2000/svg","defs");
   // 阴影滤镜：仅在阴影>0时挂载；滤镜区域加大到 220%，避免光晕被裁剪出横/竖杂条
   if (state.shadow > 0) {
-    const defs = document.createElementNS("http://www.w3.org/2000/svg","defs");
     const filter = document.createElementNS("http://www.w3.org/2000/svg","filter");
     filter.setAttribute("id","textShadowFilter");
     filter.setAttribute("x","-60%");
@@ -779,8 +912,24 @@ function renderSvgText(){
     dropShadow.setAttribute("flood-color", state.shadowColor);
     filter.appendChild(dropShadow);
     defs.appendChild(filter);
-    svg.appendChild(defs);
   }
+  // 主标题渐变填充：垂直双色渐变（熔金/紫夜等预设）
+  if (state.mainGradient && state.mainGradient.length === 2) {
+    const grad = document.createElementNS("http://www.w3.org/2000/svg","linearGradient");
+    grad.setAttribute("id","mainTitleGrad");
+    grad.setAttribute("x1","0");
+    grad.setAttribute("y1","0");
+    grad.setAttribute("x2","0");
+    grad.setAttribute("y2","1");
+    state.mainGradient.forEach((c, i) => {
+      const stop = document.createElementNS("http://www.w3.org/2000/svg","stop");
+      stop.setAttribute("offset", i === 0 ? "0%" : "100%");
+      stop.setAttribute("stop-color", c);
+      grad.appendChild(stop);
+    });
+    defs.appendChild(grad);
+  }
+  if (defs.firstChild) svg.appendChild(defs);
 
   function buildSvgText(txt, pos, fontSize, fill, fontFamilyCls, align, fontWeight, letterSpacing){
     const x = pos.xPct / 100 * w;
@@ -821,12 +970,21 @@ function renderSvgText(){
       "font-cover-archivo":"'Archivo Black','Noto Sans SC'",
       "font-cover-slab":"'Alfa Slab One','Noto Serif SC'",
       "font-cover-bangers":"'Bangers','Noto Sans SC'",
-      "font-cover-playfair":"'Playfair Display','Noto Serif SC'"
+      "font-cover-playfair":"'Playfair Display','Noto Serif SC'",
+      "font-cover-smiley":"'Smiley Sans Oblique','Noto Sans SC'",
+      "font-cover-jinbu":"'DingTalk JinBuTi','Noto Sans SC'",
+      "font-cover-dongkai":"'Alimama DongFangDaKai','Noto Serif SC'",
+      "font-cover-honglei":"'hongleixingshu','Ma Shan Zheng'",
+      "font-cover-wenkai":"'LXGW WenKai Screen','Noto Serif SC'",
+      "font-cover-zhuyuan":"'MaokenZhuyuanTi','ZCOOL KuaiLe'",
+      "font-cover-yozai":"'Yozai','Ma Shan Zheng'"
     };
     textEl.setAttribute("font-family", fontMap[fontFamilyCls] || "'Noto Sans SC'");
     return textEl;
   }
-  const mainEl = buildSvgText(state.mainTitle, state.mainPos, state.mainSize, state.mainColor, state.mainFontFamily, state.mainAlign, state.mainFontWeight, state.mainLetterSpacing);
+  // 主标题：有渐变预设时用渐变填充，否则用纯色
+  const mainFill = (state.mainGradient && state.mainGradient.length === 2) ? 'url(#mainTitleGrad)' : state.mainColor;
+  const mainEl = buildSvgText(state.mainTitle, state.mainPos, state.mainSize, mainFill, state.mainFontFamily, state.mainAlign, state.mainFontWeight, state.mainLetterSpacing);
   svg.appendChild(mainEl);
   const subEl = buildSvgText(state.subTitle, state.subPos, state.subSize, state.subColor, state.subFontFamily, state.subAlign, state.subFontWeight, state.subLetterSpacing);
   svg.appendChild(subEl);
@@ -1015,15 +1173,15 @@ function renderDragItems(){
     let innerHtml='';
     switch(d.type){
       case 'bgBar':
-        d.w = d.w || 180; d.h = d.h || 44;
+        d.w = d.w || 360; d.h = d.h || 110;
         innerHtml=`<div class="decor-shape" style="position:relative;width:${d.w}px;height:${d.h}px;background:${hexToRgba(d.color1 || '#000000', d.opacity == null ? 0.6 : d.opacity)};border-radius:4px;"><div class="resize-handle" data-html2canvas-ignore title="拖拽调整大小"></div></div>`; break;
       case 'gradientBar':
-        d.w = d.w || 220; d.h = d.h || 50;
+        d.w = d.w || 420; d.h = d.h || 120;
         innerHtml=`<div class="decor-shape" style="position:relative;width:${d.w}px;height:${d.h}px;background:linear-gradient(90deg, ${d.color1 || '#ff4466'}, ${d.color2 || '#ffaa22'});border-radius:4px;"><div class="resize-handle" data-html2canvas-ignore title="拖拽调整大小"></div></div>`; break;
       case 'arrow':
-        innerHtml=`<div style="font-size:70px;color:#ff4444;">➤</div>`; break;
+        innerHtml=`<div style="font-size:110px;color:#ff4444;">➤</div>`; break;
       case 'tagCorner':
-        d.label = d.label || '标签'; d.fontSize = d.fontSize || 14;
+        d.label = d.label || '标签'; d.fontSize = d.fontSize || 22;
         innerHtml=`<div class="decor-shape" style="position:relative;display:inline-block;background:#ff3333;color:white;padding:0.3em 0.7em;font-size:${d.fontSize}px;border-radius:2px;white-space:nowrap;"><span class="tag-label">${escapeHtml(d.label)}</span><div class="resize-handle" data-html2canvas-ignore title="拖拽调整大小"></div></div>`; break;
     }
     // 文字背景条 / 渐变遮罩条：颜色自定义控件（取色器 + 背景条不透明度）
@@ -1038,7 +1196,7 @@ function renderDragItems(){
     // 角标标签：标签文字输入
     let labelControls = '';
     if (d.type === 'tagCorner') {
-      labelControls = `<input class="labelInput w-16 text-xs border bg-white" type="text" value="${escapeHtml(d.label || '标签')}" title="标签文字">`;
+      labelControls = `<input class="labelInput w-14 h-5 text-[10px] border bg-white px-0.5" type="text" value="${escapeHtml(d.label || '标签')}" title="标签文字">`;
     }
     // 背景条/遮罩条：文字上层 ⇄ 文字下层 切换按钮
     const layerBtnHtml = (d.type === 'bgBar' || d.type === 'gradientBar')
@@ -1053,8 +1211,8 @@ function renderDragItems(){
         ${layerBtnHtml}
       </div>
       <div class="ctrl-bottom" data-html2canvas-ignore>
-        <input class="scaleInput w-12 text-xs border bg-white" type="number" step="0.1" min="0.2" max="3" value="${d.scale}">
-        <input class="rotateInput w-12 text-xs border bg-white" type="number" step="1" min="0" max="360" value="${d.rotate}">
+        <input class="scaleInput w-10 h-5 text-[10px] border bg-white px-0.5" type="number" step="0.1" min="0.2" max="3" value="${d.scale}" title="缩放">
+        <input class="rotateInput w-10 h-5 text-[10px] border bg-white px-0.5" type="number" step="1" min="0" max="360" value="${d.rotate}" title="旋转角度">
         <label class="blend-label" title="正片叠底：与背景图混合压暗">
           <input class="blendToggle" type="checkbox" ${d.blend === 'multiply' ? 'checked' : ''}>叠底
         </label>
@@ -1110,7 +1268,7 @@ function renderDragItems(){
         handleEl.setPointerCapture(e.pointerId);
         const startX = e.clientX, startY = e.clientY;
         const isTag = d.type === 'tagCorner';
-        const startW = d.w, startH = d.h, startFS = d.fontSize || 14;
+        const startW = d.w, startH = d.h, startFS = d.fontSize || 22;
         const onMove = ev => {
           const rect = getStageRect();
           const stageW = parseFloat(document.getElementById('coverStage').style.width) || rect.width;
@@ -1140,25 +1298,46 @@ function renderDragItems(){
     }
     const layBtn = el.querySelector('.layBtn');
     if (layBtn) layBtn.onclick = (e) => { e.stopPropagation(); d.belowText = !d.belowText; renderDragItems(); };
-    syncDecor();
+    // 先挂载再布局：控件行夹紧定位依赖真实测量的宽高（未挂载时 offsetWidth 为 0）
     (d.belowText ? belowLayer : container).appendChild(el);
+    syncDecor();
   });
 }
 
-// 装饰编辑控件跟随图形尺寸定位（锚点式装饰项，控件保持水平便于操作）
+// 装饰编辑控件跟随图形尺寸定位：
+// 两行控件紧凑堆叠在图形同一侧（图形在画布上半→控件放下方，下半→放上方），
+// 只遮挡一侧，另一侧完全让给标题等主要元素；控件行水平夹紧在画布内，不会被边缘裁剪
 function layoutDecorControls(el, d, shapeEl){
   const wrapEl = el.querySelector('.shape-wrap');
   const shape = shapeEl || (wrapEl && wrapEl.firstElementChild);
   const s = d.scale || 1;
   const wpx = (shape ? shape.offsetWidth : 120) * s;
   const hpx = (shape ? shape.offsetHeight : 40) * s;
-  const top = el.querySelector('.ctrl-top');
-  const bottom = el.querySelector('.ctrl-bottom');
-  if (!top || !bottom) return;
-  top.style.left = -wpx / 2 + 'px';
-  top.style.top = -(hpx / 2 + 22) + 'px';
-  bottom.style.left = -wpx / 2 + 'px';
-  bottom.style.top = hpx / 2 + 6 + 'px';
+  const actions = el.querySelector('.ctrl-top');   // ↑↓× / 层级切换
+  const props = el.querySelector('.ctrl-bottom');  // 缩放/旋转/颜色等属性行
+  if (!actions || !props) return;
+  const stage = document.getElementById('coverStage');
+  const W = parseFloat(stage.style.width) || 960;
+  const H = parseFloat(stage.style.height) || 540;
+  const cx = d.xPct / 100 * W;
+  const cy = d.yPct / 100 * H;
+  // 控件朝画布中心一侧展开：既不被 stage 的 overflow:hidden 裁剪，也少压住画面主体
+  const below = cy <= H / 2;
+  const ah = actions.offsetHeight || 20, ph = props.offsetHeight || 20;
+  let aTop, pTop;
+  if (below) {
+    aTop = hpx / 2 + 10;      // 操作行贴图形下缘（右下角手柄 z-index 更高，不受影响）
+    pTop = aTop + ah + 2;     // 属性行紧贴堆叠在其外侧
+  } else {
+    aTop = -(hpx / 2 + 10 + ah);
+    pTop = aTop - 2 - ph;
+  }
+  // 水平夹紧：控件行不超出画布左右边界
+  const clampLeft = (row, base) => Math.max(-cx, Math.min(W - cx - row.offsetWidth, base));
+  actions.style.left = clampLeft(actions, -wpx / 2) + 'px';
+  props.style.left = clampLeft(props, -wpx / 2) + 'px';
+  actions.style.top = aTop + 'px';
+  props.style.top = pTop + 'px';
 }
 
 // 拖拽：Pointer事件（兼容触屏）+ 指针捕获，不往document上挂监听，避免渲染后监听泄漏
@@ -1182,6 +1361,8 @@ function makeDraggableByPct(el, pos) {
   });
   el.addEventListener('pointerup', e => {
     if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId);
+    // 装饰项拖拽结束后重算控件行位置：翻转展开侧并夹紧回画布内
+    if (el.classList.contains('decor-item')) layoutDecorControls(el, pos, el.querySelector('.decor-shape'));
   });
 }
 
@@ -1309,7 +1490,7 @@ function bindEvents() {
   document.getElementById('thirdLetterSpacing').addEventListener('input', e => { state.thirdLetterSpacing = parseFloat(e.target.value) || 0; renderSvgText(); });
   document.getElementById('mainSize').addEventListener('change', e => { state.mainSize = +e.target.value; renderSvgText(); });
   document.getElementById('subSize').addEventListener('change', e => { state.subSize = +e.target.value; renderSvgText(); });
-  document.getElementById('mainColor').addEventListener('input', e => { state.mainColor = e.target.value; renderSvgText(); });
+  document.getElementById('mainColor').addEventListener('input', e => { state.mainColor = e.target.value; state.mainGradient = null; renderSvgText(); });
   document.getElementById('subColor').addEventListener('input', e => { state.subColor = e.target.value; renderSvgText(); });
   document.getElementById('strokeColor').addEventListener('input', e => { state.strokeColor = e.target.value; renderSvgText(); });
   document.getElementById('strokeSize').addEventListener('input', e => { state.strokeSize = +e.target.value; document.getElementById('strokeSizeLabel').textContent = e.target.value; renderSvgText(); });
@@ -1327,15 +1508,15 @@ function bindEvents() {
     state.mainFontFamily = 'font-cover-bold'; state.subFontFamily = 'font-cover-sub'; state.thirdFontFamily = 'font-cover-sub';
     state.mainFontWeight = 'bold'; state.subFontWeight = 'bold'; state.thirdFontWeight = 'bold';
     state.mainLetterSpacing = 1; state.subLetterSpacing = 1; state.thirdLetterSpacing = 1;
-    state.mainSize = 48; state.subSize = 24; state.mainColor = '#ffffff'; state.subColor = '#ffdd44';
-    state.strokeColor = '#000000'; state.strokeSize = 2;
+    state.mainSize = 100; state.subSize = 54; state.mainColor = '#ffffff'; state.subColor = '#ffdd44';
+    state.strokeColor = '#000000'; state.strokeSize = 2; state.mainGradient = null;
     state.shadowColor = '#000000'; state.shadow = 5;
-    state.mainAlign = 'start'; state.subAlign = 'start';
+    state.mainAlign = 'middle'; state.subAlign = 'middle';
     state.brightness = 100; state.contrast = 100; state.saturate = 100; state.blur = 0;
     state.filterPreset = 'none'; state.stickerList = []; state.decorList=[];
-    state.mainPos = { xPct: 8, yPct: 40 }; state.subPos = { xPct: 8, yPct: 62 };
-    state.hasThird = false; state.thirdTitle = ''; state.thirdSize = 18; state.thirdColor = '#ffffff';
-    state.thirdAlign = 'start'; state.thirdPos = { xPct: 8, yPct: 74 };
+    state.mainPos = { xPct: 50, yPct: 40 }; state.subPos = { xPct: 50, yPct: 62 };
+    state.hasThird = false; state.thirdTitle = ''; state.thirdSize = 30; state.thirdColor = '#ffffff';
+    state.thirdAlign = 'middle'; state.thirdPos = { xPct: 50, yPct: 74 };
     document.getElementById('mainTitle').value = state.mainTitle; document.getElementById('subTitle').value = state.subTitle;
     document.getElementById('mainFontFamily').value = state.mainFontFamily; document.getElementById('subFontFamily').value = state.subFontFamily;
     document.getElementById('thirdFontFamily').value = state.thirdFontFamily;
@@ -1363,6 +1544,11 @@ function bindEvents() {
     document.getElementById('thirdTitle').value = '';
     document.getElementById('thirdSize').value = state.thirdSize;
     document.getElementById('thirdColor').value = state.thirdColor;
+    // 样式预设下拉与色点恢复默认（白字黑边）
+    document.getElementById('textStylePreset').value = '';
+    const presetDot = document.getElementById('presetDot');
+    presetDot.style.background = '#ffffff';
+    presetDot.style.border = '2px solid #000000';
     syncThirdUI();
     renderSvgText(); renderDragItems(); applyFilter();
   });
@@ -1398,7 +1584,7 @@ function bindEvents() {
 }
 
 function init() {
-  applySize(); renderTemplates(); renderStickers(); renderDecorPanel(); renderSvgText(); renderDragItems(); applyFilter(); syncFilterToggle(); syncThirdUI(); bindEvents();
+  applySize(); renderTemplates(); renderStickers(); renderDecorPanel(); renderTextStylePresets(); renderSvgText(); renderDragItems(); applyFilter(); syncFilterToggle(); syncThirdUI(); bindEvents();
   // 小屏默认收起素材栏，画布优先；大屏保持展开
   if (window.innerWidth < 1024) setPanelCollapsed(true);
   // 字体加载完成后文字实际宽度会变，重算文字命中框
